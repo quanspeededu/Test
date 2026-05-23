@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Doanh Thu – Trà Sữa Hoa Sen | T3/2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #21262d;
+  --border: rgba(255,255,255,0.08);
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #f4a83a;
+  --accent2: #38bdf8;
+  --accent3: #4ade80;
+  --accent4: #f87171;
+  --lotus: #e85d9a;
+  --lotus2: #c44d88;
+  --card-shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ---- HEADER ---- */
+.header {
+  background: linear-gradient(135deg, #1a0a2e 0%, #0d1117 50%, #0a1628 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.header-left { display: flex; align-items: center; gap: 16px; }
+.logo-icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, var(--lotus), var(--accent));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+  box-shadow: 0 0 20px rgba(232,93,154,0.4);
+}
+.header-title { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+.header-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.header-badge {
+  background: rgba(244,168,58,0.15);
+  border: 1px solid rgba(244,168,58,0.3);
+  color: var(--accent);
+  padding: 6px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+}
+
+/* ---- LAYOUT ---- */
+.main { padding: 28px 32px; max-width: 1600px; margin: 0 auto; }
+.section-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ---- KPI CARDS ---- */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.kpi-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.kpi-card:hover { transform: translateY(-2px); box-shadow: var(--card-shadow); }
+.kpi-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+}
+.kpi-card.c1::before { background: linear-gradient(90deg, var(--lotus), var(--accent)); }
+.kpi-card.c2::before { background: linear-gradient(90deg, var(--accent2), #818cf8); }
+.kpi-card.c3::before { background: linear-gradient(90deg, var(--accent3), #2dd4bf); }
+.kpi-card.c4::before { background: linear-gradient(90deg, var(--accent), #fb923c); }
+.kpi-card.c5::before { background: linear-gradient(90deg, #a78bfa, var(--lotus)); }
+.kpi-label { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.kpi-value { font-size: 28px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+.kpi-card.c1 .kpi-value { color: var(--lotus); }
+.kpi-card.c2 .kpi-value { color: var(--accent2); }
+.kpi-card.c3 .kpi-value { color: var(--accent3); }
+.kpi-card.c4 .kpi-value { color: var(--accent); }
+.kpi-card.c5 .kpi-value { color: #c4b5fd; }
+.kpi-unit { font-size: 12px; font-weight: 500; color: var(--muted); margin-top: 6px; }
+.kpi-icon { position: absolute; right: 20px; top: 20px; font-size: 28px; opacity: 0.15; }
+
+/* ---- CHARTS ROW ---- */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+@media (max-width: 900px) { .charts-row { grid-template-columns: 1fr; } }
+
+.chart-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+.chart-card h3 {
+  font-size: 13px; font-weight: 700; color: var(--text);
+  margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+}
+.chart-card h3 span { font-size: 10px; font-weight: 500; color: var(--muted); }
+.chart-wrap { position: relative; }
+
+/* ---- DAILY CHART WITH TOGGLE ---- */
+.toggle-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.toggle-btn {
+  padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border);
+  background: transparent; color: var(--muted); font-size: 12px; font-family: inherit;
+  cursor: pointer; transition: all 0.15s;
+}
+.toggle-btn.active {
+  background: rgba(232,93,154,0.15); border-color: var(--lotus);
+  color: var(--lotus); font-weight: 600;
+}
+
+/* ---- REGIONAL ---- */
+.region-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+@media (max-width: 900px) { .region-row { grid-template-columns: 1fr; } }
+
+/* ---- TABLE ---- */
+.table-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 28px;
+}
+.table-controls {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 16px; flex-wrap: wrap;
+}
+.search-input {
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); border-radius: 8px; padding: 8px 14px;
+  font-size: 13px; font-family: inherit; width: 220px;
+  outline: none;
+}
+.search-input:focus { border-color: var(--lotus); }
+.filter-select {
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); border-radius: 8px; padding: 8px 12px;
+  font-size: 13px; font-family: inherit; cursor: pointer; outline: none;
+}
+.filter-select:focus { border-color: var(--lotus); }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  padding: 10px 14px; text-align: left;
+  color: var(--muted); font-weight: 600; font-size: 11px;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; white-space: nowrap;
+  user-select: none;
+}
+thead th:hover { color: var(--text); }
+thead th.sorted { color: var(--lotus); }
+.sort-arrow { margin-left: 4px; font-size: 10px; }
+tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.12s;
+}
+tbody tr:hover { background: rgba(255,255,255,0.03); }
+tbody tr:last-child { border-bottom: none; }
+td { padding: 11px 14px; white-space: nowrap; }
+td.store-name { max-width: 220px; white-space: normal; font-weight: 500; }
+.rank-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 6px;
+  font-size: 11px; font-weight: 700;
+}
+.rank-badge.r1 { background: rgba(255,215,0,0.2); color: #ffd700; }
+.rank-badge.r2 { background: rgba(192,192,192,0.2); color: #c0c0c0; }
+.rank-badge.r3 { background: rgba(205,127,50,0.2); color: #cd7f32; }
+.rank-badge.rn { background: var(--bg3); color: var(--muted); }
+.city-tag {
+  display: inline-block; padding: 2px 8px; border-radius: 12px;
+  font-size: 11px; font-weight: 500;
+  background: rgba(56,189,248,0.1); color: var(--accent2);
+  border: 1px solid rgba(56,189,248,0.2);
+}
+.region-tag {
+  display: inline-block; padding: 2px 8px; border-radius: 12px;
+  font-size: 11px; font-weight: 500;
+  background: rgba(232,93,154,0.1); color: var(--lotus);
+  border: 1px solid rgba(232,93,154,0.2);
+}
+.region-tag.mb { background: rgba(74,222,128,0.08); color: var(--accent3); border-color: rgba(74,222,128,0.2); }
+.region-tag.mt { background: rgba(248,113,113,0.08); color: var(--accent4); border-color: rgba(248,113,113,0.2); }
+.bar-mini {
+  display: inline-block; height: 6px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--lotus), var(--accent));
+  vertical-align: middle;
+}
+.rev-cell { font-weight: 600; color: var(--text); }
+.tc-cell { color: var(--accent2); }
+.ta-cell { color: var(--accent3); }
+.perf-pct { font-size: 11px; color: var(--muted); }
+
+/* ---- CITY/REGION BREAKDOWN ---- */
+.breakdown-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+.breakdown-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 18px; }
+.breakdown-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.breakdown-row:last-child { border-bottom: none; }
+.breakdown-name { min-width: 110px; font-weight: 500; font-size: 13px; }
+.breakdown-bar-wrap { flex: 1; height: 8px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+.breakdown-bar { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+.breakdown-val { min-width: 100px; text-align: right; font-size: 12px; color: var(--muted); }
+.breakdown-val strong { color: var(--text); font-weight: 600; }
+
+/* ---- FOOTER ---- */
+.footer {
+  text-align: center; padding: 24px;
+  color: var(--muted); font-size: 12px;
+  border-top: 1px solid var(--border); margin-top: 8px;
+}
+
+/* ---- SCROLLBAR ---- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #30363d; }
+
+/* ---- ANIMATIONS ---- */
+@keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+.kpi-card { animation: fadeUp 0.4s ease both; }
+.kpi-card:nth-child(1) { animation-delay: 0.05s; }
+.kpi-card:nth-child(2) { animation-delay: 0.1s; }
+.kpi-card:nth-child(3) { animation-delay: 0.15s; }
+.kpi-card:nth-child(4) { animation-delay: 0.2s; }
+.kpi-card:nth-child(5) { animation-delay: 0.25s; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo-icon">🪷</div>
+    <div>
+      <div class="header-title">Trà Sữa Hoa Sen – Revenue Dashboard</div>
+      <div class="header-sub">Báo cáo Tháng 3/2026 &nbsp;|&nbsp; 41 Cửa hàng &nbsp;|&nbsp; Miền Bắc & Miền Trung</div>
+    </div>
+  </div>
+  <div class="header-badge">🗓 01/03 – 31/03/2026</div>
+</div>
+
+<div class="main">
+
+  <!-- KPI CARDS -->
+  <div class="section-title">📊 Tổng quan hiệu suất tháng</div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <!-- CHARTS ROW 1 -->
+  <div class="section-title">📈 Phân tích doanh thu</div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>🏆 Top 10 Cửa hàng theo Doanh Thu Net <span>(triệu VND)</span></h3>
+      <div class="chart-wrap" style="height:340px">
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>📅 Xu hướng Doanh Thu theo Ngày</h3>
+      <div class="toggle-row">
+        <button class="toggle-btn active" onclick="setDailyMode('all',this)">Tất cả ngày</button>
+        <button class="toggle-btn" onclick="setDailyMode('weekday',this)">Ngày thường</button>
+        <button class="toggle-btn" onclick="setDailyMode('weekend',this)">Cuối tuần</button>
+      </div>
+      <div class="chart-wrap" style="height:290px">
+        <canvas id="lineChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGIONAL BREAKDOWN -->
+  <div class="section-title">🗺 Phân tích theo Địa lý</div>
+  <div class="region-row">
+    <div class="breakdown-card">
+      <h3>🏙 Doanh Thu theo Thành phố / Tỉnh</h3>
+      <div id="cityBreakdown"></div>
+    </div>
+    <div class="breakdown-card">
+      <h3>🌏 Doanh Thu theo Vùng Miền</h3>
+      <div id="regionBreakdown"></div>
+      <div style="margin-top:24px;">
+        <div class="chart-wrap" style="height:180px">
+          <canvas id="regionPie"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORE TABLE -->
+  <div class="section-title">🏪 Bảng KPI Chi tiết từng Cửa hàng</div>
+  <div class="table-card">
+    <div class="table-controls">
+      <input class="search-input" type="text" id="searchInput" placeholder="🔍 Tìm cửa hàng...">
+      <select class="filter-select" id="cityFilter">
+        <option value="">Tất cả thành phố</option>
+      </select>
+      <select class="filter-select" id="regionFilter">
+        <option value="">Tất cả vùng miền</option>
+        <option value="Miền Bắc">Miền Bắc</option>
+        <option value="Miền Trung">Miền Trung</option>
+      </select>
+      <span id="rowCount" style="color:var(--muted);font-size:12px;margin-left:auto;"></span>
+    </div>
+    <div class="table-wrap">
+      <table id="storeTable">
+        <thead>
+          <tr>
+            <th onclick="sortTable(0)" data-col="0">#</th>
+            <th onclick="sortTable(1)" data-col="1">Cửa hàng <span class="sort-arrow"></span></th>
+            <th onclick="sortTable(2)" data-col="2">Thành phố <span class="sort-arrow"></span></th>
+            <th onclick="sortTable(3)" data-col="3">Vùng <span class="sort-arrow"></span></th>
+            <th onclick="sortTable(4)" data-col="4">DT Net (triệu) <span class="sort-arrow">↓</span></th>
+            <th onclick="sortTable(5)" data-col="5">TC <span class="sort-arrow"></span></th>
+            <th onclick="sortTable(6)" data-col="6">Avg TA (đ) <span class="sort-arrow"></span></th>
+            <th>% DT chuỗi</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  Maycha Finance · Dữ liệu xuất từ iPOS · Tháng 3/2026 · 41 cửa hàng Trà Sữa Hoa Sen
+</div>
+
+<script>
+const DATA = {"kpis":{"total_rev_net":20136406605,"total_tc":1952311,"adtc":62978,"avg_ta":10314,"num_stores":41},"stores":[{"name":"BLP Trà Sữa Hoa Sen - Bạch Mai","rev":1073389944,"tc":123687,"avg_ta":8678,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":37591794,"sold":4142},"02/03/2026":{"rev":34707885,"sold":3933},"03/03/2026":{"rev":26954277,"sold":3155},"04/03/2026":{"rev":49256502,"sold":5718},"05/03/2026":{"rev":44510833,"sold":4906},"06/03/2026":{"rev":44377600,"sold":4905},"07/03/2026":{"rev":43589089,"sold":5113},"08/03/2026":{"rev":46447127,"sold":5331},"09/03/2026":{"rev":41718206,"sold":4806},"10/03/2026":{"rev":34914596,"sold":3943},"11/03/2026":{"rev":41548366,"sold":4808},"12/03/2026":{"rev":37293913,"sold":4267},"13/03/2026":{"rev":38444520,"sold":4306},"14/03/2026":{"rev":31756943,"sold":3610},"15/03/2026":{"rev":32561859,"sold":3799},"16/03/2026":{"rev":33635693,"sold":3806},"17/03/2026":{"rev":32578315,"sold":3560},"18/03/2026":{"rev":43613832,"sold":5080},"19/03/2026":{"rev":30363974,"sold":3741},"20/03/2026":{"rev":35507897,"sold":4362},"21/03/2026":{"rev":32228993,"sold":3664},"22/03/2026":{"rev":34924836,"sold":3953},"23/03/2026":{"rev":23399379,"sold":2736},"24/03/2026":{"rev":27775275,"sold":3151},"25/03/2026":{"rev":36008810,"sold":4164},"26/03/2026":{"rev":32106012,"sold":3537},"27/03/2026":{"rev":30785229,"sold":3486},"28/03/2026":{"rev":27750787,"sold":2978},"29/03/2026":{"rev":28882195,"sold":3026},"30/03/2026":{"rev":25059766,"sold":2965},"31/03/2026":{"rev":31283400,"sold":3527}}},{"name":"BLP Trà Sữa Hoa Sen - Đào Tấn","rev":869417601,"tc":98873,"avg_ta":8793,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":20082484,"sold":2175},"02/03/2026":{"rev":25881994,"sold":2911},"03/03/2026":{"rev":24521190,"sold":2873},"04/03/2026":{"rev":34673453,"sold":4104},"05/03/2026":{"rev":29720912,"sold":3337},"06/03/2026":{"rev":28297001,"sold":3508},"07/03/2026":{"rev":30907768,"sold":3434},"08/03/2026":{"rev":34573861,"sold":3733},"09/03/2026":{"rev":22965625,"sold":2650},"10/03/2026":{"rev":27017579,"sold":3008},"11/03/2026":{"rev":34638914,"sold":3997},"12/03/2026":{"rev":22482288,"sold":2680},"13/03/2026":{"rev":30716070,"sold":3113},"14/03/2026":{"rev":32853749,"sold":3611},"15/03/2026":{"rev":28961912,"sold":3396},"16/03/2026":{"rev":24468979,"sold":2859},"17/03/2026":{"rev":27483544,"sold":3173},"18/03/2026":{"rev":34765041,"sold":4289},"19/03/2026":{"rev":28489700,"sold":3355},"20/03/2026":{"rev":31667449,"sold":3806},"21/03/2026":{"rev":30348418,"sold":3228},"22/03/2026":{"rev":35061518,"sold":4119},"23/03/2026":{"rev":22854082,"sold":2723},"24/03/2026":{"rev":24111234,"sold":2825},"25/03/2026":{"rev":29822453,"sold":3304},"26/03/2026":{"rev":24919755,"sold":2677},"27/03/2026":{"rev":26228239,"sold":3243},"28/03/2026":{"rev":26380517,"sold":2963},"29/03/2026":{"rev":29470641,"sold":3012},"30/03/2026":{"rev":24677442,"sold":2824},"31/03/2026":{"rev":25631483,"sold":2971}}},{"name":"BLP Trà Sữa Hoa Sen _ Đội Cấn","rev":540345180,"tc":58328,"avg_ta":9264,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":18413912,"sold":1636},"02/03/2026":{"rev":15818883,"sold":1706},"03/03/2026":{"rev":13297671,"sold":1376},"04/03/2026":{"rev":18365710,"sold":1967},"05/03/2026":{"rev":16764934,"sold":1729},"06/03/2026":{"rev":28192291,"sold":3015},"07/03/2026":{"rev":20421075,"sold":2034},"08/03/2026":{"rev":17362550,"sold":1691},"09/03/2026":{"rev":15586711,"sold":1792},"10/03/2026":{"rev":16246472,"sold":1761},"11/03/2026":{"rev":20016203,"sold":2299},"12/03/2026":{"rev":16616402,"sold":1927},"13/03/2026":{"rev":18996365,"sold":2116},"14/03/2026":{"rev":18231391,"sold":2146},"15/03/2026":{"rev":13496594,"sold":1412},"16/03/2026":{"rev":15529185,"sold":1928},"17/03/2026":{"rev":16773022,"sold":1746},"18/03/2026":{"rev":18886922,"sold":2101},"19/03/2026":{"rev":16135748,"sold":1987},"20/03/2026":{"rev":15351570,"sold":1786},"21/03/2026":{"rev":18295802,"sold":2105},"22/03/2026":{"rev":14701876,"sold":1336},"23/03/2026":{"rev":11536772,"sold":1247},"24/03/2026":{"rev":12620633,"sold":1332},"25/03/2026":{"rev":19202673,"sold":2157},"26/03/2026":{"rev":18539760,"sold":2262},"27/03/2026":{"rev":17617075,"sold":2111},"28/03/2026":{"rev":20910887,"sold":2308},"29/03/2026":{"rev":16984916,"sold":1601},"30/03/2026":{"rev":13480837,"sold":1563},"31/03/2026":{"rev":19396718,"sold":2089}}},{"name":"BLP Trà Sữa Hoa Sen _ Giảng Võ","rev":636541502,"tc":72999,"avg_ta":8720,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":18716931,"sold":1974},"02/03/2026":{"rev":28441021,"sold":3350},"03/03/2026":{"rev":19613313,"sold":2303},"04/03/2026":{"rev":30768801,"sold":3746},"05/03/2026":{"rev":17925621,"sold":2098},"06/03/2026":{"rev":32672735,"sold":3750},"07/03/2026":{"rev":24726930,"sold":2843},"08/03/2026":{"rev":26247784,"sold":3078},"09/03/2026":{"rev":28346969,"sold":4035},"10/03/2026":{"rev":13651670,"sold":1536},"11/03/2026":{"rev":19441559,"sold":2201},"12/03/2026":{"rev":20658811,"sold":2250},"13/03/2026":{"rev":26725440,"sold":2898},"14/03/2026":{"rev":19868593,"sold":2133},"15/03/2026":{"rev":19743830,"sold":2280},"16/03/2026":{"rev":16803483,"sold":1923},"17/03/2026":{"rev":17753516,"sold":2112},"18/03/2026":{"rev":17376102,"sold":1995},"19/03/2026":{"rev":18644556,"sold":2308},"20/03/2026":{"rev":15373149,"sold":1831},"21/03/2026":{"rev":22587899,"sold":2452},"22/03/2026":{"rev":22994706,"sold":2757},"23/03/2026":{"rev":19953480,"sold":2474},"24/03/2026":{"rev":15372053,"sold":1731},"25/03/2026":{"rev":21603938,"sold":2524},"26/03/2026":{"rev":16188849,"sold":2052},"27/03/2026":{"rev":23527246,"sold":2803},"28/03/2026":{"rev":14098487,"sold":1595},"29/03/2026":{"rev":18929679,"sold":2178},"30/03/2026":{"rev":12758994,"sold":1512},"31/03/2026":{"rev":15072204,"sold":1725}}},{"name":"BLP Trà Sữa Hoa Sen - Hàm Nghi","rev":328618390,"tc":30982,"avg_ta":10607,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":9286208,"sold":913},"02/03/2026":{"rev":10735537,"sold":973},"03/03/2026":{"rev":9646113,"sold":840},"04/03/2026":{"rev":9286808,"sold":900},"05/03/2026":{"rev":9262488,"sold":907},"06/03/2026":{"rev":11315919,"sold":1258},"07/03/2026":{"rev":13296538,"sold":1230},"08/03/2026":{"rev":16535129,"sold":1742},"09/03/2026":{"rev":9281278,"sold":916},"10/03/2026":{"rev":10259404,"sold":911},"11/03/2026":{"rev":12223894,"sold":1199},"12/03/2026":{"rev":9217416,"sold":868},"13/03/2026":{"rev":12419021,"sold":1182},"14/03/2026":{"rev":13471020,"sold":1221},"15/03/2026":{"rev":7918791,"sold":803},"16/03/2026":{"rev":7573792,"sold":727},"17/03/2026":{"rev":7128102,"sold":631},"18/03/2026":{"rev":11129763,"sold":1127},"19/03/2026":{"rev":9442669,"sold":951},"20/03/2026":{"rev":16259404,"sold":1678},"21/03/2026":{"rev":11908798,"sold":1037},"22/03/2026":{"rev":12509048,"sold":1238},"23/03/2026":{"rev":8266896,"sold":834},"24/03/2026":{"rev":7924969,"sold":731},"25/03/2026":{"rev":11391874,"sold":1037},"26/03/2026":{"rev":7648267,"sold":711},"27/03/2026":{"rev":13144607,"sold":1198},"28/03/2026":{"rev":11646359,"sold":1023},"29/03/2026":{"rev":9251025,"sold":783},"30/03/2026":{"rev":7545886,"sold":707},"31/03/2026":{"rev":9287147,"sold":863}}},{"name":"BLP Trà Sữa Hoa Sen - Hoàng Văn Thái","rev":668879179,"tc":74231,"avg_ta":9011,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":20950723,"sold":2158},"02/03/2026":{"rev":21769318,"sold":2420},"03/03/2026":{"rev":18284783,"sold":2187},"04/03/2026":{"rev":22800655,"sold":2646},"05/03/2026":{"rev":16900327,"sold":1963},"06/03/2026":{"rev":33949732,"sold":3834},"07/03/2026":{"rev":28121755,"sold":3092},"08/03/2026":{"rev":26504718,"sold":2568},"09/03/2026":{"rev":22465639,"sold":2357},"10/03/2026":{"rev":19979529,"sold":2038},"11/03/2026":{"rev":17666231,"sold":1940},"12/03/2026":{"rev":13993657,"sold":1415},"13/03/2026":{"rev":21728558,"sold":2339},"14/03/2026":{"rev":25665318,"sold":2762},"15/03/2026":{"rev":24919283,"sold":2623},"16/03/2026":{"rev":19790847,"sold":2143},"17/03/2026":{"rev":20884005,"sold":2310},"18/03/2026":{"rev":25462581,"sold":2777},"19/03/2026":{"rev":20303798,"sold":2286},"20/03/2026":{"rev":21685393,"sold":2506},"21/03/2026":{"rev":25288195,"sold":2709},"22/03/2026":{"rev":23355809,"sold":2524},"23/03/2026":{"rev":18343590,"sold":1973},"24/03/2026":{"rev":18498644,"sold":1878},"25/03/2026":{"rev":26123916,"sold":2837},"26/03/2026":{"rev":20035123,"sold":2084},"27/03/2026":{"rev":21588602,"sold":2473},"28/03/2026":{"rev":22157984,"sold":2352},"29/03/2026":{"rev":21525933,"sold":2344},"30/03/2026":{"rev":18837124,"sold":1895},"31/03/2026":{"rev":20016253,"sold":2181}}},{"name":"BLP Trà Sữa Hoa Sen - Hồ Tùng Mậu","rev":719128211,"tc":65547,"avg_ta":10971,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":23775605,"sold":1979},"02/03/2026":{"rev":25792684,"sold":2388},"03/03/2026":{"rev":17997791,"sold":1684},"04/03/2026":{"rev":27533833,"sold":2485},"05/03/2026":{"rev":20031261,"sold":1825},"06/03/2026":{"rev":26885997,"sold":2574},"07/03/2026":{"rev":19903651,"sold":1848},"08/03/2026":{"rev":30613054,"sold":2515},"09/03/2026":{"rev":25700338,"sold":2397},"10/03/2026":{"rev":18202890,"sold":1575},"11/03/2026":{"rev":34420903,"sold":3074},"12/03/2026":{"rev":23185396,"sold":2103},"13/03/2026":{"rev":23846963,"sold":2004},"14/03/2026":{"rev":21837428,"sold":1832},"15/03/2026":{"rev":24660826,"sold":2019},"16/03/2026":{"rev":26554322,"sold":2377},"17/03/2026":{"rev":23641038,"sold":2047},"18/03/2026":{"rev":34929056,"sold":3193},"19/03/2026":{"rev":25971871,"sold":2404},"20/03/2026":{"rev":18071073,"sold":1778},"21/03/2026":{"rev":23213749,"sold":1972},"22/03/2026":{"rev":22258480,"sold":1884},"23/03/2026":{"rev":20069911,"sold":2045},"24/03/2026":{"rev":20465327,"sold":1736},"25/03/2026":{"rev":29198439,"sold":2658},"26/03/2026":{"rev":20343131,"sold":1729},"27/03/2026":{"rev":21069087,"sold":1840},"28/03/2026":{"rev":20781550,"sold":1813},"29/03/2026":{"rev":21600842,"sold":1761},"30/03/2026":{"rev":18458758,"sold":1783},"31/03/2026":{"rev":18286750,"sold":1618}}},{"name":"Trà Sữa Hoa Sen - Chương Mỹ","rev":134022205,"tc":6126,"avg_ta":21878,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":7903886,"sold":338},"02/03/2026":{"rev":4158319,"sold":184},"03/03/2026":{"rev":3287115,"sold":140},"04/03/2026":{"rev":4909752,"sold":223},"05/03/2026":{"rev":2486759,"sold":104},"06/03/2026":{"rev":4239297,"sold":208},"07/03/2026":{"rev":6105899,"sold":303},"08/03/2026":{"rev":9064368,"sold":420},"09/03/2026":{"rev":1758803,"sold":82},"10/03/2026":{"rev":3679550,"sold":154},"11/03/2026":{"rev":3510729,"sold":155},"12/03/2026":{"rev":2165238,"sold":94},"13/03/2026":{"rev":5039304,"sold":214},"14/03/2026":{"rev":6518577,"sold":355},"15/03/2026":{"rev":4634204,"sold":213},"16/03/2026":{"rev":3426257,"sold":142},"17/03/2026":{"rev":4790893,"sold":209},"18/03/2026":{"rev":4885226,"sold":228},"19/03/2026":{"rev":2653196,"sold":132},"20/03/2026":{"rev":3868208,"sold":150},"21/03/2026":{"rev":7598881,"sold":346},"22/03/2026":{"rev":5607799,"sold":278},"23/03/2026":{"rev":3024675,"sold":148},"24/03/2026":{"rev":2205710,"sold":136},"25/03/2026":{"rev":3932820,"sold":213},"26/03/2026":{"rev":4003523,"sold":199},"27/03/2026":{"rev":2402943,"sold":105},"28/03/2026":{"rev":6017543,"sold":263},"29/03/2026":{"rev":5615717,"sold":241},"30/03/2026":{"rev":1990335,"sold":84},"31/03/2026":{"rev":2040525,"sold":98}}},{"name":"Trà Sữa Hoa Sen - Đại Từ","rev":647667668,"tc":81045,"avg_ta":7991,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":33007882,"sold":4065},"02/03/2026":{"rev":16268748,"sold":2075},"03/03/2026":{"rev":23268396,"sold":3118},"04/03/2026":{"rev":17453130,"sold":2118},"05/03/2026":{"rev":13220613,"sold":1693},"06/03/2026":{"rev":22818131,"sold":3153},"07/03/2026":{"rev":28327073,"sold":3434},"08/03/2026":{"rev":31140751,"sold":4145},"09/03/2026":{"rev":13557360,"sold":1600},"10/03/2026":{"rev":20759577,"sold":2649},"11/03/2026":{"rev":21576031,"sold":2833},"12/03/2026":{"rev":19435293,"sold":2527},"13/03/2026":{"rev":20158064,"sold":2701},"14/03/2026":{"rev":24580614,"sold":2874},"15/03/2026":{"rev":24738211,"sold":3081},"16/03/2026":{"rev":18917882,"sold":2547},"17/03/2026":{"rev":17671668,"sold":2367},"18/03/2026":{"rev":20525126,"sold":2571},"19/03/2026":{"rev":15653897,"sold":1893},"20/03/2026":{"rev":18260866,"sold":2337},"21/03/2026":{"rev":22890369,"sold":2940},"22/03/2026":{"rev":26087894,"sold":3315},"23/03/2026":{"rev":16067510,"sold":2097},"24/03/2026":{"rev":15843932,"sold":2004},"25/03/2026":{"rev":18515505,"sold":2280},"26/03/2026":{"rev":19467040,"sold":2227},"27/03/2026":{"rev":18964843,"sold":2216},"28/03/2026":{"rev":21532560,"sold":2542},"29/03/2026":{"rev":19318757,"sold":2335},"30/03/2026":{"rev":20154768,"sold":2701},"31/03/2026":{"rev":24139067,"sold":3052}}},{"name":"Trà Sữa Hoa Sen _Hàng Gà","rev":127854065,"tc":10825,"avg_ta":11811,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":3024447,"sold":241},"02/03/2026":{"rev":2095958,"sold":152},"03/03/2026":{"rev":2621056,"sold":240},"04/03/2026":{"rev":3033265,"sold":290},"05/03/2026":{"rev":3583633,"sold":315},"06/03/2026":{"rev":5131468,"sold":434},"07/03/2026":{"rev":4671856,"sold":429},"08/03/2026":{"rev":4890719,"sold":453},"09/03/2026":{"rev":2861708,"sold":249},"10/03/2026":{"rev":4830974,"sold":392},"11/03/2026":{"rev":3767368,"sold":329},"12/03/2026":{"rev":4362230,"sold":413},"13/03/2026":{"rev":4267802,"sold":388},"14/03/2026":{"rev":4106258,"sold":355},"15/03/2026":{"rev":4261323,"sold":307},"16/03/2026":{"rev":2516361,"sold":275},"17/03/2026":{"rev":3069907,"sold":283},"18/03/2026":{"rev":5248415,"sold":422},"19/03/2026":{"rev":5059900,"sold":464},"20/03/2026":{"rev":5348178,"sold":455},"21/03/2026":{"rev":6318833,"sold":543},"22/03/2026":{"rev":3379803,"sold":277},"23/03/2026":{"rev":5767608,"sold":531},"24/03/2026":{"rev":2814268,"sold":234},"25/03/2026":{"rev":4417765,"sold":377},"26/03/2026":{"rev":3012025,"sold":299},"27/03/2026":{"rev":3116408,"sold":348},"28/03/2026":{"rev":6730378,"sold":550},"29/03/2026":{"rev":5720311,"sold":491},"30/03/2026":{"rev":2924682,"sold":273},"31/03/2026":{"rev":3211703,"sold":287}}},{"name":"Trà Sữa Hoa Sen - Hoài Đức","rev":503733234,"tc":41126,"avg_ta":12249,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":19342386,"sold":1590},"02/03/2026":{"rev":17672278,"sold":1405},"03/03/2026":{"rev":11604555,"sold":986},"04/03/2026":{"rev":13634161,"sold":1165},"05/03/2026":{"rev":14014865,"sold":1215},"06/03/2026":{"rev":24385140,"sold":2068},"07/03/2026":{"rev":35747857,"sold":2964},"08/03/2026":{"rev":30812521,"sold":2470},"09/03/2026":{"rev":15242352,"sold":1250},"10/03/2026":{"rev":18222871,"sold":1668},"11/03/2026":{"rev":14711910,"sold":1261},"12/03/2026":{"rev":15679146,"sold":1325},"13/03/2026":{"rev":19734215,"sold":1690},"14/03/2026":{"rev":18554583,"sold":1524},"15/03/2026":{"rev":18747808,"sold":1637},"16/03/2026":{"rev":11089904,"sold":1007},"17/03/2026":{"rev":10012289,"sold":797},"18/03/2026":{"rev":12509406,"sold":1044},"19/03/2026":{"rev":12332092,"sold":937},"20/03/2026":{"rev":12419810,"sold":965},"21/03/2026":{"rev":17438319,"sold":1395},"22/03/2026":{"rev":12449629,"sold":1047},"23/03/2026":{"rev":13962952,"sold":1164},"24/03/2026":{"rev":16131634,"sold":1354},"25/03/2026":{"rev":12096931,"sold":1060},"26/03/2026":{"rev":11903024,"sold":968},"27/03/2026":{"rev":14786494,"sold":1259},"28/03/2026":{"rev":14994069,"sold":1276},"29/03/2026":{"rev":14068897,"sold":1237},"30/03/2026":{"rev":13081554,"sold":1095},"31/03/2026":{"rev":11554737,"sold":960}}},{"name":"Trà Sữa Hoa Sen - Kpark","rev":838615448,"tc":93572,"avg_ta":8962,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":30040941,"sold":3091},"02/03/2026":{"rev":26308308,"sold":3170},"03/03/2026":{"rev":25424017,"sold":2829},"04/03/2026":{"rev":29229344,"sold":3230},"05/03/2026":{"rev":21081429,"sold":2568},"06/03/2026":{"rev":46213938,"sold":5269},"07/03/2026":{"rev":32394038,"sold":3775},"08/03/2026":{"rev":35433951,"sold":3724},"09/03/2026":{"rev":29749768,"sold":2693},"10/03/2026":{"rev":31647247,"sold":3541},"11/03/2026":{"rev":32287924,"sold":3462},"12/03/2026":{"rev":26212706,"sold":2666},"13/03/2026":{"rev":28083349,"sold":3092},"14/03/2026":{"rev":39439280,"sold":4084},"15/03/2026":{"rev":27689619,"sold":3153},"16/03/2026":{"rev":19980230,"sold":2076},"17/03/2026":{"rev":23224566,"sold":2392},"18/03/2026":{"rev":23356701,"sold":2567},"19/03/2026":{"rev":21787869,"sold":2510},"20/03/2026":{"rev":24799524,"sold":2821},"21/03/2026":{"rev":24708299,"sold":2818},"22/03/2026":{"rev":31725119,"sold":3260},"23/03/2026":{"rev":23124486,"sold":2740},"24/03/2026":{"rev":20824996,"sold":2277},"25/03/2026":{"rev":25542832,"sold":2658},"26/03/2026":{"rev":26023799,"sold":2733},"27/03/2026":{"rev":25141379,"sold":2756},"28/03/2026":{"rev":24567149,"sold":2725},"29/03/2026":{"rev":23166536,"sold":2613},"30/03/2026":{"rev":24031630,"sold":2797},"31/03/2026":{"rev":25065483,"sold":2671}}},{"name":"Trà Sữa Hoa Sen - Ngô Gia Tự","rev":523455292,"tc":51399,"avg_ta":10184,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":12818327,"sold":1237},"02/03/2026":{"rev":12837430,"sold":1365},"03/03/2026":{"rev":10400279,"sold":919},"04/03/2026":{"rev":19292355,"sold":1774},"05/03/2026":{"rev":10326003,"sold":996},"06/03/2026":{"rev":14371595,"sold":1295},"07/03/2026":{"rev":19548650,"sold":1827},"08/03/2026":{"rev":24529885,"sold":2412},"09/03/2026":{"rev":20658606,"sold":1881},"10/03/2026":{"rev":9730057,"sold":836},"11/03/2026":{"rev":17693177,"sold":1794},"12/03/2026":{"rev":12787852,"sold":1291},"13/03/2026":{"rev":12380348,"sold":1249},"14/03/2026":{"rev":15111334,"sold":1530},"15/03/2026":{"rev":18597032,"sold":1812},"16/03/2026":{"rev":13549053,"sold":1366},"17/03/2026":{"rev":13717699,"sold":1357},"18/03/2026":{"rev":21967948,"sold":2003},"19/03/2026":{"rev":16876051,"sold":1935},"20/03/2026":{"rev":14455601,"sold":1421},"21/03/2026":{"rev":17703349,"sold":1853},"22/03/2026":{"rev":20939749,"sold":2178},"23/03/2026":{"rev":13910785,"sold":1347},"24/03/2026":{"rev":14728410,"sold":1337},"25/03/2026":{"rev":23899798,"sold":2426},"26/03/2026":{"rev":14222724,"sold":1360},"27/03/2026":{"rev":18338920,"sold":1782},"28/03/2026":{"rev":19959036,"sold":2075},"29/03/2026":{"rev":25010351,"sold":2509},"30/03/2026":{"rev":17130006,"sold":1725},"31/03/2026":{"rev":15545536,"sold":1573}}},{"name":"Trà Sữa Hoa Sen - Nguyễn An Ninh","rev":378340179,"tc":37807,"avg_ta":10007,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":15656602,"sold":1472},"02/03/2026":{"rev":11836140,"sold":1182},"03/03/2026":{"rev":10367783,"sold":1095},"04/03/2026":{"rev":13076136,"sold":1353},"05/03/2026":{"rev":9269067,"sold":952},"06/03/2026":{"rev":12576802,"sold":1268},"07/03/2026":{"rev":14451561,"sold":1416},"08/03/2026":{"rev":17890879,"sold":1720},"09/03/2026":{"rev":10362186,"sold":1085},"10/03/2026":{"rev":11497301,"sold":1061},"11/03/2026":{"rev":16126089,"sold":1679},"12/03/2026":{"rev":10208047,"sold":936},"13/03/2026":{"rev":12126404,"sold":1192},"14/03/2026":{"rev":13894402,"sold":1355},"15/03/2026":{"rev":12796853,"sold":1224},"16/03/2026":{"rev":10883901,"sold":1153},"17/03/2026":{"rev":9848550,"sold":904},"18/03/2026":{"rev":14650272,"sold":1446},"19/03/2026":{"rev":10715496,"sold":1052},"20/03/2026":{"rev":12129533,"sold":1079},"21/03/2026":{"rev":11290485,"sold":1068},"22/03/2026":{"rev":13697590,"sold":1381},"23/03/2026":{"rev":9811756,"sold":1096},"24/03/2026":{"rev":9077126,"sold":858},"25/03/2026":{"rev":16989356,"sold":1716},"26/03/2026":{"rev":10266326,"sold":926},"27/03/2026":{"rev":12650111,"sold":1280},"28/03/2026":{"rev":12991321,"sold":1227},"29/03/2026":{"rev":12754345,"sold":1286},"30/03/2026":{"rev":15083539,"sold":1474},"31/03/2026":{"rev":9978522,"sold":1013}}},{"name":"Trà Sữa Hoa Sen - Nguyễn Trãi","rev":933838332,"tc":108287,"avg_ta":8624,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":23579196,"sold":2568},"02/03/2026":{"rev":34545598,"sold":4153},"03/03/2026":{"rev":29072465,"sold":3238},"04/03/2026":{"rev":36861031,"sold":4227},"05/03/2026":{"rev":27816538,"sold":3108},"06/03/2026":{"rev":46389582,"sold":5041},"07/03/2026":{"rev":37916977,"sold":4043},"08/03/2026":{"rev":45848803,"sold":5472},"09/03/2026":{"rev":25727261,"sold":3050},"10/03/2026":{"rev":27372134,"sold":3036},"11/03/2026":{"rev":42622829,"sold":4865},"12/03/2026":{"rev":33236074,"sold":3689},"13/03/2026":{"rev":30011494,"sold":3634},"14/03/2026":{"rev":23574150,"sold":2501},"15/03/2026":{"rev":24531127,"sold":2829},"16/03/2026":{"rev":30869021,"sold":3649},"17/03/2026":{"rev":24792268,"sold":2947},"18/03/2026":{"rev":34855317,"sold":3945},"19/03/2026":{"rev":27035522,"sold":3163},"20/03/2026":{"rev":24468700,"sold":2709},"21/03/2026":{"rev":27649288,"sold":3027},"22/03/2026":{"rev":25083122,"sold":2833},"23/03/2026":{"rev":26265396,"sold":2957},"24/03/2026":{"rev":24140028,"sold":2655},"25/03/2026":{"rev":43790992,"sold":4714},"26/03/2026":{"rev":23244985,"sold":2665},"27/03/2026":{"rev":27635823,"sold":3232},"28/03/2026":{"rev":21093653,"sold":2604},"29/03/2026":{"rev":22298854,"sold":2769},"30/03/2026":{"rev":37812261,"sold":4236},"31/03/2026":{"rev":28157737,"sold":3234}}},{"name":"Trà Sữa Hoa Sen - S1.10 Vinhomes Ocean Park","rev":295691362,"tc":27791,"avg_ta":10640,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":9641489,"sold":1055},"02/03/2026":{"rev":8048246,"sold":853},"03/03/2026":{"rev":6605137,"sold":644},"04/03/2026":{"rev":9396714,"sold":884},"05/03/2026":{"rev":9327660,"sold":813},"06/03/2026":{"rev":11952466,"sold":1107},"07/03/2026":{"rev":15694357,"sold":1605},"08/03/2026":{"rev":11777415,"sold":976},"09/03/2026":{"rev":9408903,"sold":831},"10/03/2026":{"rev":8568257,"sold":763},"11/03/2026":{"rev":13012026,"sold":1264},"12/03/2026":{"rev":13124472,"sold":1317},"13/03/2026":{"rev":10133608,"sold":1050},"14/03/2026":{"rev":8492824,"sold":838},"15/03/2026":{"rev":8019036,"sold":801},"16/03/2026":{"rev":9228891,"sold":848},"17/03/2026":{"rev":7384797,"sold":751},"18/03/2026":{"rev":10451170,"sold":956},"19/03/2026":{"rev":7921852,"sold":719},"20/03/2026":{"rev":6792508,"sold":709},"21/03/2026":{"rev":10911906,"sold":1046},"22/03/2026":{"rev":8462834,"sold":782},"23/03/2026":{"rev":7343818,"sold":636},"24/03/2026":{"rev":10236525,"sold":784},"25/03/2026":{"rev":10784835,"sold":1005},"26/03/2026":{"rev":10692095,"sold":908},"27/03/2026":{"rev":9290834,"sold":904},"28/03/2026":{"rev":9093006,"sold":703},"29/03/2026":{"rev":9284124,"sold":865},"30/03/2026":{"rev":10555561,"sold":997},"31/03/2026":{"rev":7032959,"sold":620}}},{"name":"Trà Sữa Hoa Sen - Sài Đồng","rev":249697049,"tc":25012,"avg_ta":9983,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":2840554,"sold":233},"02/03/2026":{"rev":3803166,"sold":351},"03/03/2026":{"rev":3639534,"sold":328},"04/03/2026":{"rev":4826986,"sold":428},"05/03/2026":{"rev":4976117,"sold":489},"06/03/2026":{"rev":3974416,"sold":343},"07/03/2026":{"rev":3978460,"sold":372},"08/03/2026":{"rev":4126297,"sold":381},"09/03/2026":{"rev":5671075,"sold":542},"10/03/2026":{"rev":2267786,"sold":193},"11/03/2026":{"rev":7498611,"sold":776},"12/03/2026":{"rev":3174590,"sold":275},"13/03/2026":{"rev":2493552,"sold":259},"14/03/2026":{"rev":5650454,"sold":578},"15/03/2026":{"rev":8562275,"sold":834},"16/03/2026":{"rev":15767991,"sold":1434},"17/03/2026":{"rev":11731222,"sold":1084},"18/03/2026":{"rev":11152424,"sold":1061},"19/03/2026":{"rev":13417434,"sold":1311},"20/03/2026":{"rev":10368394,"sold":1048},"21/03/2026":{"rev":11742136,"sold":1045},"22/03/2026":{"rev":12556796,"sold":1314},"23/03/2026":{"rev":6285698,"sold":691},"24/03/2026":{"rev":10413960,"sold":1011},"25/03/2026":{"rev":9703376,"sold":1061},"26/03/2026":{"rev":11343646,"sold":1215},"27/03/2026":{"rev":11080614,"sold":1164},"28/03/2026":{"rev":13708867,"sold":1435},"29/03/2026":{"rev":10200162,"sold":1124},"30/03/2026":{"rev":11125684,"sold":1137},"31/03/2026":{"rev":11031004,"sold":1179}}},{"name":"Trà Sữa Hoa Sen - Tây Mỗ","rev":763133240,"tc":62426,"avg_ta":12225,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":21458551,"sold":1754},"02/03/2026":{"rev":26069479,"sold":2191},"03/03/2026":{"rev":17005167,"sold":1500},"04/03/2026":{"rev":28244355,"sold":2314},"05/03/2026":{"rev":20417977,"sold":1740},"06/03/2026":{"rev":39085544,"sold":3081},"07/03/2026":{"rev":26560226,"sold":2241},"08/03/2026":{"rev":39513766,"sold":3085},"09/03/2026":{"rev":21283392,"sold":1518},"10/03/2026":{"rev":26097451,"sold":2185},"11/03/2026":{"rev":26353419,"sold":2189},"12/03/2026":{"rev":22173624,"sold":2106},"13/03/2026":{"rev":25064093,"sold":2178},"14/03/2026":{"rev":25114954,"sold":2037},"15/03/2026":{"rev":28843547,"sold":2366},"16/03/2026":{"rev":25485896,"sold":1795},"17/03/2026":{"rev":26664012,"sold":2068},"18/03/2026":{"rev":27157277,"sold":2324},"19/03/2026":{"rev":24168658,"sold":1939},"20/03/2026":{"rev":24964762,"sold":2077},"21/03/2026":{"rev":26220880,"sold":2231},"22/03/2026":{"rev":23765809,"sold":1719},"23/03/2026":{"rev":20905987,"sold":1712},"24/03/2026":{"rev":21189610,"sold":1774},"25/03/2026":{"rev":25504833,"sold":2164},"26/03/2026":{"rev":20467345,"sold":1530},"27/03/2026":{"rev":16521631,"sold":1224},"28/03/2026":{"rev":17313163,"sold":1411},"29/03/2026":{"rev":27879032,"sold":2271},"30/03/2026":{"rev":27953744,"sold":2030},"31/03/2026":{"rev":20274686,"sold":1425}}},{"name":"Trà Sữa Hoa Sen - Thành Lợi","rev":187010191,"tc":8909,"avg_ta":20991,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":9245797,"sold":405},"02/03/2026":{"rev":3534199,"sold":182},"03/03/2026":{"rev":0,"sold":0},"04/03/2026":{"rev":12301157,"sold":582},"05/03/2026":{"rev":4155322,"sold":202},"06/03/2026":{"rev":7841895,"sold":374},"07/03/2026":{"rev":9109238,"sold":432},"08/03/2026":{"rev":15438941,"sold":704},"09/03/2026":{"rev":3049656,"sold":171},"10/03/2026":{"rev":852169,"sold":30},"11/03/2026":{"rev":5022096,"sold":237},"12/03/2026":{"rev":5412971,"sold":252},"13/03/2026":{"rev":2979078,"sold":195},"14/03/2026":{"rev":10941884,"sold":539},"15/03/2026":{"rev":9281356,"sold":425},"16/03/2026":{"rev":3764822,"sold":174},"17/03/2026":{"rev":0,"sold":0},"18/03/2026":{"rev":8077639,"sold":378},"19/03/2026":{"rev":4177963,"sold":212},"20/03/2026":{"rev":4905424,"sold":263},"21/03/2026":{"rev":6985660,"sold":340},"22/03/2026":{"rev":6264306,"sold":303},"23/03/2026":{"rev":3765487,"sold":184},"24/03/2026":{"rev":4994319,"sold":230},"25/03/2026":{"rev":4455026,"sold":220},"26/03/2026":{"rev":8011933,"sold":371},"27/03/2026":{"rev":4664290,"sold":226},"28/03/2026":{"rev":10233091,"sold":451},"29/03/2026":{"rev":7480464,"sold":376},"30/03/2026":{"rev":5025926,"sold":243},"31/03/2026":{"rev":3834787,"sold":182}}},{"name":"Trà Sữa Hoa Sen - Thanh Niên","rev":702848545,"tc":76330,"avg_ta":9208,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":29552162,"sold":3027},"02/03/2026":{"rev":22965949,"sold":2600},"03/03/2026":{"rev":20075973,"sold":2159},"04/03/2026":{"rev":20795863,"sold":2429},"05/03/2026":{"rev":17204915,"sold":1980},"06/03/2026":{"rev":33541363,"sold":3514},"07/03/2026":{"rev":28587287,"sold":3172},"08/03/2026":{"rev":35854530,"sold":3977},"09/03/2026":{"rev":22794602,"sold":2540},"10/03/2026":{"rev":20170646,"sold":2174},"11/03/2026":{"rev":21508774,"sold":2107},"12/03/2026":{"rev":20362222,"sold":2061},"13/03/2026":{"rev":25457831,"sold":2800},"14/03/2026":{"rev":24636582,"sold":2602},"15/03/2026":{"rev":30314182,"sold":3145},"16/03/2026":{"rev":18895202,"sold":2068},"17/03/2026":{"rev":18400761,"sold":2094},"18/03/2026":{"rev":23032082,"sold":2706},"19/03/2026":{"rev":18065631,"sold":2057},"20/03/2026":{"rev":19226893,"sold":2331},"21/03/2026":{"rev":17879474,"sold":1982},"22/03/2026":{"rev":23904221,"sold":2458},"23/03/2026":{"rev":15194049,"sold":1827},"24/03/2026":{"rev":15797295,"sold":1835},"25/03/2026":{"rev":22514618,"sold":2512},"26/03/2026":{"rev":20246796,"sold":2184},"27/03/2026":{"rev":23175930,"sold":2517},"28/03/2026":{"rev":24129376,"sold":2467},"29/03/2026":{"rev":27595977,"sold":2849},"30/03/2026":{"rev":20016412,"sold":2237},"31/03/2026":{"rev":16269986,"sold":1819}}},{"name":"Trà Sữa Hoa Sen - Trâu Quỳ","rev":261826581,"tc":25115,"avg_ta":10425,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":13085846,"sold":1281},"02/03/2026":{"rev":8429140,"sold":805},"03/03/2026":{"rev":10631266,"sold":1112},"04/03/2026":{"rev":10863824,"sold":1076},"05/03/2026":{"rev":23362377,"sold":1991},"06/03/2026":{"rev":18048248,"sold":1769},"07/03/2026":{"rev":21972782,"sold":2071},"08/03/2026":{"rev":15814816,"sold":1502},"09/03/2026":{"rev":11129790,"sold":1136},"10/03/2026":{"rev":10121174,"sold":1013},"11/03/2026":{"rev":14211822,"sold":1496},"12/03/2026":{"rev":12174321,"sold":1279},"13/03/2026":{"rev":9500685,"sold":1015},"14/03/2026":{"rev":17529560,"sold":1651},"15/03/2026":{"rev":4851339,"sold":411},"16/03/2026":{"rev":4984926,"sold":510},"17/03/2026":{"rev":3640498,"sold":363},"18/03/2026":{"rev":4762299,"sold":434},"19/03/2026":{"rev":3716743,"sold":332},"20/03/2026":{"rev":3447374,"sold":322},"21/03/2026":{"rev":3963491,"sold":392},"22/03/2026":{"rev":4391780,"sold":423},"23/03/2026":{"rev":3858388,"sold":360},"24/03/2026":{"rev":4964193,"sold":498},"25/03/2026":{"rev":3521642,"sold":300},"26/03/2026":{"rev":4010151,"sold":342},"27/03/2026":{"rev":4276059,"sold":399},"28/03/2026":{"rev":3347708,"sold":285},"29/03/2026":{"rev":3880860,"sold":314},"30/03/2026":{"rev":3957890,"sold":366},"31/03/2026":{"rev":2535370,"sold":210}}},{"name":"Trà Sữa Hoa Sen - Văn Quán","rev":586464262,"tc":40972,"avg_ta":14314,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":18645116,"sold":1315},"02/03/2026":{"rev":21857215,"sold":1534},"03/03/2026":{"rev":12471625,"sold":944},"04/03/2026":{"rev":23744582,"sold":1711},"05/03/2026":{"rev":30357044,"sold":1788},"06/03/2026":{"rev":29828652,"sold":1895},"07/03/2026":{"rev":16765288,"sold":1127},"08/03/2026":{"rev":24984201,"sold":1620},"09/03/2026":{"rev":21170815,"sold":1649},"10/03/2026":{"rev":16045030,"sold":1167},"11/03/2026":{"rev":17500015,"sold":1343},"12/03/2026":{"rev":22314763,"sold":1534},"13/03/2026":{"rev":18625719,"sold":1363},"14/03/2026":{"rev":21581732,"sold":1628},"15/03/2026":{"rev":18217150,"sold":1126},"16/03/2026":{"rev":17551877,"sold":1408},"17/03/2026":{"rev":13295013,"sold":910},"18/03/2026":{"rev":20832147,"sold":1515},"19/03/2026":{"rev":17204884,"sold":1293},"20/03/2026":{"rev":15457104,"sold":1075},"21/03/2026":{"rev":19073792,"sold":1421},"22/03/2026":{"rev":19068272,"sold":1291},"23/03/2026":{"rev":17183856,"sold":1351},"24/03/2026":{"rev":15227891,"sold":1133},"25/03/2026":{"rev":17563872,"sold":1080},"26/03/2026":{"rev":16375122,"sold":1171},"27/03/2026":{"rev":16333085,"sold":1210},"28/03/2026":{"rev":17010471,"sold":1269},"29/03/2026":{"rev":12507133,"sold":911},"30/03/2026":{"rev":11635259,"sold":771},"31/03/2026":{"rev":15571763,"sold":1076}}},{"name":"Trà Sữa Hoa Sen - Vĩnh Hưng","rev":340830738,"tc":32989,"avg_ta":10332,"city":"Hà Nội","region":"Miền Bắc","daily":{"01/03/2026":{"rev":11125253,"sold":1046},"02/03/2026":{"rev":8518795,"sold":854},"03/03/2026":{"rev":6342580,"sold":588},"04/03/2026":{"rev":13542301,"sold":1332},"05/03/2026":{"rev":10178467,"sold":1073},"06/03/2026":{"rev":11597239,"sold":1026},"07/03/2026":{"rev":14184058,"sold":1283},"08/03/2026":{"rev":15758872,"sold":1351},"09/03/2026":{"rev":10276936,"sold":968},"10/03/2026":{"rev":11291406,"sold":1004},"11/03/2026":{"rev":11441815,"sold":1123},"12/03/2026":{"rev":12031031,"sold":1107},"13/03/2026":{"rev":9327251,"sold":919},"14/03/2026":{"rev":11064288,"sold":1071},"15/03/2026":{"rev":12912086,"sold":1261},"16/03/2026":{"rev":10919152,"sold":1070},"17/03/2026":{"rev":8944199,"sold":882},"18/03/2026":{"rev":17035517,"sold":1694},"19/03/2026":{"rev":8835306,"sold":877},"20/03/2026":{"rev":9842709,"sold":899},"21/03/2026":{"rev":14565944,"sold":1326},"22/03/2026":{"rev":12177313,"sold":1022},"23/03/2026":{"rev":12168315,"sold":1157},"24/03/2026":{"rev":6469432,"sold":606},"25/03/2026":{"rev":13021188,"sold":1347},"26/03/2026":{"rev":8426992,"sold":739},"27/03/2026":{"rev":8973114,"sold":937},"28/03/2026":{"rev":9758242,"sold":915},"29/03/2026":{"rev":10920003,"sold":982},"30/03/2026":{"rev":11057379,"sold":1043},"31/03/2026":{"rev":10668733,"sold":978}}},{"name":"BLP Trà Sữa Hoa Sen - Đà Nẵng","rev":404467967,"tc":37867,"avg_ta":10681,"city":"Đà Nẵng","region":"Miền Trung","daily":{"01/03/2026":{"rev":13176178,"sold":1028},"02/03/2026":{"rev":11708408,"sold":1156},"03/03/2026":{"rev":10310870,"sold":952},"04/03/2026":{"rev":18258377,"sold":1840},"05/03/2026":{"rev":11385504,"sold":1015},"06/03/2026":{"rev":10338832,"sold":897},"07/03/2026":{"rev":16062547,"sold":1544},"08/03/2026":{"rev":24408204,"sold":2126},"09/03/2026":{"rev":13069261,"sold":1301},"10/03/2026":{"rev":10717237,"sold":1029},"11/03/2026":{"rev":17247188,"sold":1694},"12/03/2026":{"rev":12998982,"sold":1272},"13/03/2026":{"rev":12191869,"sold":1109},"14/03/2026":{"rev":15009485,"sold":1361},"15/03/2026":{"rev":15026180,"sold":1332},"16/03/2026":{"rev":12363198,"sold":974},"17/03/2026":{"rev":9591675,"sold":914},"18/03/2026":{"rev":15028902,"sold":1460},"19/03/2026":{"rev":12156104,"sold":1186},"20/03/2026":{"rev":12440945,"sold":1315},"21/03/2026":{"rev":15398650,"sold":1448},"22/03/2026":{"rev":23061707,"sold":2111},"23/03/2026":{"rev":9269384,"sold":1022},"24/03/2026":{"rev":9562616,"sold":881},"25/03/2026":{"rev":13737175,"sold":1375},"26/03/2026":{"rev":12421274,"sold":1078},"27/03/2026":{"rev":10400071,"sold":942},"28/03/2026":{"rev":10551666,"sold":1013},"29/03/2026":{"rev":12496917,"sold":1228},"30/03/2026":{"rev":10458282,"sold":997},"31/03/2026":{"rev":6711247,"sold":621}}},{"name":"BLP Trà Sữa Hoa Sen - Lạch Tray","rev":711499782,"tc":67993,"avg_ta":10464,"city":"Hải Phòng","region":"Miền Bắc","daily":{"01/03/2026":{"rev":30540566,"sold":2951},"02/03/2026":{"rev":24487028,"sold":2450},"03/03/2026":{"rev":18068886,"sold":1708},"04/03/2026":{"rev":7371281,"sold":641},"05/03/2026":{"rev":22976944,"sold":2056},"06/03/2026":{"rev":30968507,"sold":2975},"07/03/2026":{"rev":26951078,"sold":2688},"08/03/2026":{"rev":39135132,"sold":3385},"09/03/2026":{"rev":27876584,"sold":2757},"10/03/2026":{"rev":24389491,"sold":2361},"11/03/2026":{"rev":30438659,"sold":2845},"12/03/2026":{"rev":20104957,"sold":1836},"13/03/2026":{"rev":21268947,"sold":1991},"14/03/2026":{"rev":26445452,"sold":2444},"15/03/2026":{"rev":26453114,"sold":2453},"16/03/2026":{"rev":19844911,"sold":2152},"17/03/2026":{"rev":22658945,"sold":2120},"18/03/2026":{"rev":23924144,"sold":2151},"19/03/2026":{"rev":19131696,"sold":2064},"20/03/2026":{"rev":23490549,"sold":2306},"21/03/2026":{"rev":18404430,"sold":1918},"22/03/2026":{"rev":0,"sold":0},"23/03/2026":{"rev":21284436,"sold":2356},"24/03/2026":{"rev":18295717,"sold":1779},"25/03/2026":{"rev":24073947,"sold":2341},"26/03/2026":{"rev":25002615,"sold":2243},"27/03/2026":{"rev":27616169,"sold":2688},"28/03/2026":{"rev":26258598,"sold":2528},"29/03/2026":{"rev":22226909,"sold":2136},"30/03/2026":{"rev":23772542,"sold":2186},"31/03/2026":{"rev":18540451,"sold":1738}}},{"name":"BLP Trà Sữa Hoa Sen - Nguyễn Đức Cảnh","rev":981372842,"tc":97740,"avg_ta":10041,"city":"Hải Phòng","region":"Miền Bắc","daily":{"01/03/2026":{"rev":24897357,"sold":2306},"02/03/2026":{"rev":22579433,"sold":2151},"03/03/2026":{"rev":19382901,"sold":1729},"04/03/2026":{"rev":28394224,"sold":2787},"05/03/2026":{"rev":20631487,"sold":1823},"06/03/2026":{"rev":297448076,"sold":36439},"07/03/2026":{"rev":27799149,"sold":2288},"08/03/2026":{"rev":21237760,"sold":2023},"09/03/2026":{"rev":18471160,"sold":1704},"10/03/2026":{"rev":19311890,"sold":1758},"11/03/2026":{"rev":23930418,"sold":2325},"12/03/2026":{"rev":21425535,"sold":1891},"13/03/2026":{"rev":18532780,"sold":1733},"14/03/2026":{"rev":23993431,"sold":2246},"15/03/2026":{"rev":19715497,"sold":1832},"16/03/2026":{"rev":19652736,"sold":1976},"17/03/2026":{"rev":18205744,"sold":1752},"18/03/2026":{"rev":22382222,"sold":2028},"19/03/2026":{"rev":18991948,"sold":1871},"20/03/2026":{"rev":22219808,"sold":2356},"21/03/2026":{"rev":23288017,"sold":2199},"22/03/2026":{"rev":28268129,"sold":2582},"23/03/2026":{"rev":19178515,"sold":1922},"24/03/2026":{"rev":18076514,"sold":1588},"25/03/2026":{"rev":42298655,"sold":3932},"26/03/2026":{"rev":23084403,"sold":2067},"27/03/2026":{"rev":23076958,"sold":2131},"28/03/2026":{"rev":20754101,"sold":1891},"29/03/2026":{"rev":22673837,"sold":2060},"30/03/2026":{"rev":18838689,"sold":1906},"31/03/2026":{"rev":19747111,"sold":1735}}},{"name":"BLP Trà Sữa Hoa Sen - Trần Nguyên Hãn","rev":647027866,"tc":60106,"avg_ta":10765,"city":"Hải Phòng","region":"Miền Bắc","daily":{"01/03/2026":{"rev":18785206,"sold":1746},"02/03/2026":{"rev":17316555,"sold":1705},"03/03/2026":{"rev":17307605,"sold":1586},"04/03/2026":{"rev":21925129,"sold":2181},"05/03/2026":{"rev":14368063,"sold":1330},"06/03/2026":{"rev":20098452,"sold":1953},"07/03/2026":{"rev":35210616,"sold":3207},"08/03/2026":{"rev":29619539,"sold":2444},"09/03/2026":{"rev":17757250,"sold":1855},"10/03/2026":{"rev":15612641,"sold":1424},"11/03/2026":{"rev":24973993,"sold":2266},"12/03/2026":{"rev":17933576,"sold":1723},"13/03/2026":{"rev":19078385,"sold":1770},"14/03/2026":{"rev":26421739,"sold":2544},"15/03/2026":{"rev":24288373,"sold":2201},"16/03/2026":{"rev":21946457,"sold":2184},"17/03/2026":{"rev":19619995,"sold":1869},"18/03/2026":{"rev":23896291,"sold":2216},"19/03/2026":{"rev":19214974,"sold":1777},"20/03/2026":{"rev":15335850,"sold":1424},"21/03/2026":{"rev":22212585,"sold":1921},"22/03/2026":{"rev":20622184,"sold":1972},"23/03/2026":{"rev":15254447,"sold":1604},"24/03/2026":{"rev":15499658,"sold":1496},"25/03/2026":{"rev":26002834,"sold":2469},"26/03/2026":{"rev":23427403,"sold":2014},"27/03/2026":{"rev":15472892,"sold":1377},"28/03/2026":{"rev":25381028,"sold":2227},"29/03/2026":{"rev":21721219,"sold":1948},"30/03/2026":{"rev":18858604,"sold":1959},"31/03/2026":{"rev":16638262,"sold":1394}}},{"name":"Trà Sữa Hoa Sen - Thủy Nguyên","rev":94864396,"tc":6749,"avg_ta":14056,"city":"Hải Phòng","region":"Miền Bắc","daily":{"01/03/2026":{"rev":4338239,"sold":266},"02/03/2026":{"rev":2559017,"sold":183},"03/03/2026":{"rev":2117512,"sold":141},"04/03/2026":{"rev":3593655,"sold":256},"05/03/2026":{"rev":2574369,"sold":181},"06/03/2026":{"rev":4891434,"sold":356},"07/03/2026":{"rev":4534112,"sold":334},"08/03/2026":{"rev":4528769,"sold":303},"09/03/2026":{"rev":3054820,"sold":219},"10/03/2026":{"rev":3338086,"sold":238},"11/03/2026":{"rev":2193719,"sold":142},"12/03/2026":{"rev":4541416,"sold":298},"13/03/2026":{"rev":3008567,"sold":217},"14/03/2026":{"rev":1657925,"sold":127},"15/03/2026":{"rev":3261768,"sold":237},"16/03/2026":{"rev":1949329,"sold":137},"17/03/2026":{"rev":4898356,"sold":345},"18/03/2026":{"rev":1324368,"sold":90},"19/03/2026":{"rev":2180567,"sold":162},"20/03/2026":{"rev":4107518,"sold":275},"21/03/2026":{"rev":2968486,"sold":199},"22/03/2026":{"rev":4590634,"sold":312},"23/03/2026":{"rev":1571603,"sold":105},"24/03/2026":{"rev":1980041,"sold":133},"25/03/2026":{"rev":3252881,"sold":242},"26/03/2026":{"rev":3428434,"sold":245},"27/03/2026":{"rev":4017145,"sold":288},"28/03/2026":{"rev":2688079,"sold":199},"29/03/2026":{"rev":2715904,"sold":180},"30/03/2026":{"rev":2240765,"sold":145},"31/03/2026":{"rev":1641806,"sold":100}}},{"name":"Trà Sữa Hoa Sen - Vũ Yên","rev":240206697,"tc":14639,"avg_ta":16409,"city":"Hải Phòng","region":"Miền Bắc","daily":{"01/03/2026":{"rev":11127316,"sold":719},"02/03/2026":{"rev":0,"sold":0},"03/03/2026":{"rev":961205,"sold":67},"04/03/2026":{"rev":5868680,"sold":357},"05/03/2026":{"rev":1983793,"sold":128},"06/03/2026":{"rev":8550399,"sold":499},"07/03/2026":{"rev":9142385,"sold":517},"08/03/2026":{"rev":13853388,"sold":842},"09/03/2026":{"rev":7656243,"sold":445},"10/03/2026":{"rev":4276214,"sold":260},"11/03/2026":{"rev":2034996,"sold":144},"12/03/2026":{"rev":4273206,"sold":261},"13/03/2026":{"rev":3954559,"sold":258},"14/03/2026":{"rev":7059427,"sold":434},"15/03/2026":{"rev":6172170,"sold":352},"16/03/2026":{"rev":9920885,"sold":604},"17/03/2026":{"rev":391600,"sold":24},"18/03/2026":{"rev":3857328,"sold":234},"19/03/2026":{"rev":6678961,"sold":386},"20/03/2026":{"rev":9136935,"sold":519},"21/03/2026":{"rev":16296528,"sold":983},"22/03/2026":{"rev":10333828,"sold":630},"23/03/2026":{"rev":3731421,"sold":266},"24/03/2026":{"rev":20033670,"sold":1210},"25/03/2026":{"rev":3565610,"sold":219},"26/03/2026":{"rev":8427930,"sold":535},"27/03/2026":{"rev":10987601,"sold":679},"28/03/2026":{"rev":15952685,"sold":1000},"29/03/2026":{"rev":11428631,"sold":695},"30/03/2026":{"rev":20348841,"sold":1246},"31/03/2026":{"rev":3998836,"sold":270}}},{"name":"Trà Sữa Hoa Sen - Bắc Giang","rev":92513595,"tc":4136,"avg_ta":22368,"city":"Bắc Giang","region":"Miền Bắc","daily":{"01/03/2026":{"rev":1909723,"sold":72},"02/03/2026":{"rev":1794500,"sold":78},"03/03/2026":{"rev":3167059,"sold":131},"04/03/2026":{"rev":4750955,"sold":222},"05/03/2026":{"rev":2545508,"sold":111},"06/03/2026":{"rev":2077364,"sold":93},"07/03/2026":{"rev":3362410,"sold":136},"08/03/2026":{"rev":3692103,"sold":191},"09/03/2026":{"rev":2499503,"sold":130},"10/03/2026":{"rev":2343430,"sold":110},"11/03/2026":{"rev":3267573,"sold":154},"12/03/2026":{"rev":1391817,"sold":66},"13/03/2026":{"rev":2875963,"sold":129},"14/03/2026":{"rev":2324749,"sold":143},"15/03/2026":{"rev":1674275,"sold":79},"16/03/2026":{"rev":1391501,"sold":51},"17/03/2026":{"rev":2209715,"sold":103},"18/03/2026":{"rev":2642449,"sold":136},"19/03/2026":{"rev":2293106,"sold":116},"20/03/2026":{"rev":2165084,"sold":104},"21/03/2026":{"rev":3245059,"sold":153},"22/03/2026":{"rev":2218672,"sold":90},"23/03/2026":{"rev":1846645,"sold":84},"24/03/2026":{"rev":3357164,"sold":148},"25/03/2026":{"rev":16492591,"sold":700},"26/03/2026":{"rev":1859554,"sold":102},"27/03/2026":{"rev":2777736,"sold":135},"28/03/2026":{"rev":2969728,"sold":133},"29/03/2026":{"rev":3042542,"sold":139},"30/03/2026":{"rev":1869637,"sold":79},"31/03/2026":{"rev":1519237,"sold":69}}},{"name":"Trà Sữa Hoa Sen - Hàn Thuyên ( Bắc Ninh)","rev":354907443,"tc":21658,"avg_ta":16387,"city":"Hải Phòng","region":"Miền Bắc","daily":{"01/03/2026":{"rev":13648495,"sold":888},"02/03/2026":{"rev":12563801,"sold":850},"03/03/2026":{"rev":7377881,"sold":525},"04/03/2026":{"rev":10519855,"sold":821},"05/03/2026":{"rev":9511900,"sold":696},"06/03/2026":{"rev":12619519,"sold":656},"07/03/2026":{"rev":17466627,"sold":1035},"08/03/2026":{"rev":19188002,"sold":1215},"09/03/2026":{"rev":11153915,"sold":822},"10/03/2026":{"rev":8739534,"sold":617},"11/03/2026":{"rev":8490435,"sold":522},"12/03/2026":{"rev":7870794,"sold":507},"13/03/2026":{"rev":13874346,"sold":789},"14/03/2026":{"rev":15266962,"sold":913},"15/03/2026":{"rev":10369453,"sold":581},"16/03/2026":{"rev":8415748,"sold":513},"17/03/2026":{"rev":9725393,"sold":556},"18/03/2026":{"rev":7695200,"sold":520},"19/03/2026":{"rev":7645158,"sold":537},"20/03/2026":{"rev":11746657,"sold":728},"21/03/2026":{"rev":18353897,"sold":1032},"22/03/2026":{"rev":12798873,"sold":790},"23/03/2026":{"rev":11950584,"sold":713},"24/03/2026":{"rev":11828237,"sold":697},"25/03/2026":{"rev":8767272,"sold":538},"26/03/2026":{"rev":12968909,"sold":706},"27/03/2026":{"rev":11721635,"sold":882},"28/03/2026":{"rev":11332396,"sold":639},"29/03/2026":{"rev":13209550,"sold":904},"30/03/2026":{"rev":5794757,"sold":449},"31/03/2026":{"rev":6997052,"sold":404}}},{"name":"Trà Sữa Hoa Sen - Từ Sơn","rev":473649113,"tc":44974,"avg_ta":10532,"city":"Bắc Ninh","region":"Miền Bắc","daily":{"01/03/2026":{"rev":20190455,"sold":1696},"02/03/2026":{"rev":13925325,"sold":1316},"03/03/2026":{"rev":0,"sold":0},"04/03/2026":{"rev":18217541,"sold":1710},"05/03/2026":{"rev":11409829,"sold":1123},"06/03/2026":{"rev":12957940,"sold":1330},"07/03/2026":{"rev":13541828,"sold":1190},"08/03/2026":{"rev":24008185,"sold":2474},"09/03/2026":{"rev":16528963,"sold":1564},"10/03/2026":{"rev":15300497,"sold":1487},"11/03/2026":{"rev":23733415,"sold":2184},"12/03/2026":{"rev":14227750,"sold":1285},"13/03/2026":{"rev":14732705,"sold":1245},"14/03/2026":{"rev":21785578,"sold":1925},"15/03/2026":{"rev":18829521,"sold":1783},"16/03/2026":{"rev":15421565,"sold":1459},"17/03/2026":{"rev":9667455,"sold":924},"18/03/2026":{"rev":24949412,"sold":2447},"19/03/2026":{"rev":10255706,"sold":905},"20/03/2026":{"rev":14038793,"sold":1339},"21/03/2026":{"rev":16338040,"sold":1652},"22/03/2026":{"rev":17393125,"sold":1601},"23/03/2026":{"rev":15245838,"sold":1396},"24/03/2026":{"rev":12008148,"sold":1158},"25/03/2026":{"rev":19687906,"sold":1903},"26/03/2026":{"rev":10213483,"sold":950},"27/03/2026":{"rev":12349216,"sold":1159},"28/03/2026":{"rev":12885160,"sold":1087},"29/03/2026":{"rev":17332373,"sold":1711},"30/03/2026":{"rev":16469885,"sold":1560},"31/03/2026":{"rev":13711037,"sold":1178}}},{"name":"Trà Sữa Hoa Sen - Hà Tĩnh","rev":151356766,"tc":13188,"avg_ta":11477,"city":"Hà Tĩnh","region":"Miền Trung","daily":{"01/03/2026":{"rev":5165566,"sold":435},"02/03/2026":{"rev":4238010,"sold":350},"03/03/2026":{"rev":2947963,"sold":248},"04/03/2026":{"rev":4384136,"sold":361},"05/03/2026":{"rev":4489886,"sold":382},"06/03/2026":{"rev":3736270,"sold":303},"07/03/2026":{"rev":5574224,"sold":479},"08/03/2026":{"rev":7049557,"sold":595},"09/03/2026":{"rev":2169584,"sold":218},"10/03/2026":{"rev":2828859,"sold":273},"11/03/2026":{"rev":3812252,"sold":314},"12/03/2026":{"rev":4477925,"sold":363},"13/03/2026":{"rev":3699361,"sold":362},"14/03/2026":{"rev":4027670,"sold":338},"15/03/2026":{"rev":3845943,"sold":342},"16/03/2026":{"rev":2223751,"sold":196},"17/03/2026":{"rev":5627962,"sold":501},"18/03/2026":{"rev":6980931,"sold":629},"19/03/2026":{"rev":4456636,"sold":370},"20/03/2026":{"rev":6978528,"sold":635},"21/03/2026":{"rev":5101599,"sold":447},"22/03/2026":{"rev":3598959,"sold":331},"23/03/2026":{"rev":3118655,"sold":280},"24/03/2026":{"rev":4769750,"sold":412},"25/03/2026":{"rev":8374636,"sold":755},"26/03/2026":{"rev":4778811,"sold":399},"27/03/2026":{"rev":6203340,"sold":565},"28/03/2026":{"rev":5952060,"sold":532},"29/03/2026":{"rev":8001284,"sold":715},"30/03/2026":{"rev":6281466,"sold":580},"31/03/2026":{"rev":5917332,"sold":513}}},{"name":"Trà Sữa Hoa Sen - Quỳnh Côi","rev":263563142,"tc":24533,"avg_ta":10743,"city":"Nghệ An","region":"Miền Trung","daily":{"01/03/2026":{"rev":13605933,"sold":1262},"02/03/2026":{"rev":12055879,"sold":1050},"03/03/2026":{"rev":6982066,"sold":593},"04/03/2026":{"rev":7498232,"sold":760},"05/03/2026":{"rev":5407847,"sold":485},"06/03/2026":{"rev":6379942,"sold":604},"07/03/2026":{"rev":16219638,"sold":1378},"08/03/2026":{"rev":20501408,"sold":1836},"09/03/2026":{"rev":9495768,"sold":918},"10/03/2026":{"rev":6908455,"sold":704},"11/03/2026":{"rev":8215391,"sold":765},"12/03/2026":{"rev":7191324,"sold":618},"13/03/2026":{"rev":9198537,"sold":958},"14/03/2026":{"rev":11740471,"sold":1019},"15/03/2026":{"rev":10131644,"sold":956},"16/03/2026":{"rev":6445655,"sold":637},"17/03/2026":{"rev":3738200,"sold":338},"18/03/2026":{"rev":5931204,"sold":560},"19/03/2026":{"rev":8613603,"sold":791},"20/03/2026":{"rev":7450398,"sold":660},"21/03/2026":{"rev":10333888,"sold":945},"22/03/2026":{"rev":13388029,"sold":1230},"23/03/2026":{"rev":6837213,"sold":766},"24/03/2026":{"rev":5035641,"sold":499},"25/03/2026":{"rev":4542551,"sold":408},"26/03/2026":{"rev":5635107,"sold":537},"27/03/2026":{"rev":3904365,"sold":414},"28/03/2026":{"rev":9323294,"sold":880},"29/03/2026":{"rev":9175718,"sold":784},"30/03/2026":{"rev":6050371,"sold":610},"31/03/2026":{"rev":7745368,"sold":628}}},{"name":"Trà Sữa Hoa Sen - Kỳ Bá Thái Bình","rev":503142899,"tc":58275,"avg_ta":8634,"city":"Thái Bình","region":"Miền Bắc","daily":{"01/03/2026":{"rev":15614004,"sold":1569},"02/03/2026":{"rev":15051711,"sold":1535},"03/03/2026":{"rev":8289356,"sold":883},"04/03/2026":{"rev":15934705,"sold":1613},"05/03/2026":{"rev":30948697,"sold":4354},"06/03/2026":{"rev":26601848,"sold":3730},"07/03/2026":{"rev":28439582,"sold":3730},"08/03/2026":{"rev":22902981,"sold":2440},"09/03/2026":{"rev":16575976,"sold":1627},"10/03/2026":{"rev":11804102,"sold":1274},"11/03/2026":{"rev":16929936,"sold":1816},"12/03/2026":{"rev":10906271,"sold":1174},"13/03/2026":{"rev":15687516,"sold":1586},"14/03/2026":{"rev":12236248,"sold":1402},"15/03/2026":{"rev":12814172,"sold":1415},"16/03/2026":{"rev":12994421,"sold":1512},"17/03/2026":{"rev":9208572,"sold":1013},"18/03/2026":{"rev":15036857,"sold":1690},"19/03/2026":{"rev":26374318,"sold":3914},"20/03/2026":{"rev":25444722,"sold":3773},"21/03/2026":{"rev":29546267,"sold":4238},"22/03/2026":{"rev":14638581,"sold":1598},"23/03/2026":{"rev":7944621,"sold":903},"24/03/2026":{"rev":9651607,"sold":959},"25/03/2026":{"rev":15321855,"sold":1651},"26/03/2026":{"rev":12024526,"sold":1352},"27/03/2026":{"rev":11979044,"sold":1150},"28/03/2026":{"rev":16312580,"sold":1642},"29/03/2026":{"rev":12739601,"sold":1426},"30/03/2026":{"rev":11255231,"sold":1184},"31/03/2026":{"rev":7522513,"sold":762}}},{"name":"Trà Sữa Hoa Sen - Lê Thánh Tông Thái Bình","rev":457901118,"tc":50810,"avg_ta":9012,"city":"Thái Bình","region":"Miền Bắc","daily":{"01/03/2026":{"rev":19977497,"sold":2092},"02/03/2026":{"rev":11552832,"sold":1248},"03/03/2026":{"rev":11614443,"sold":1322},"04/03/2026":{"rev":17772939,"sold":1796},"05/03/2026":{"rev":13500866,"sold":1225},"06/03/2026":{"rev":12645125,"sold":1340},"07/03/2026":{"rev":19199131,"sold":2069},"08/03/2026":{"rev":25085256,"sold":2656},"09/03/2026":{"rev":11366266,"sold":1298},"10/03/2026":{"rev":11660534,"sold":1231},"11/03/2026":{"rev":13514405,"sold":1487},"12/03/2026":{"rev":11108639,"sold":1255},"13/03/2026":{"rev":11981126,"sold":1308},"14/03/2026":{"rev":15194936,"sold":1616},"15/03/2026":{"rev":16564616,"sold":1780},"16/03/2026":{"rev":11076100,"sold":1275},"17/03/2026":{"rev":8058350,"sold":827},"18/03/2026":{"rev":17024985,"sold":1845},"19/03/2026":{"rev":9528007,"sold":1011},"20/03/2026":{"rev":8216972,"sold":930},"21/03/2026":{"rev":14078816,"sold":1486},"22/03/2026":{"rev":13981484,"sold":1562},"23/03/2026":{"rev":8661324,"sold":1044},"24/03/2026":{"rev":9800283,"sold":1086},"25/03/2026":{"rev":13884827,"sold":1596},"26/03/2026":{"rev":23156156,"sold":3263},"27/03/2026":{"rev":25676059,"sold":3560},"28/03/2026":{"rev":28029671,"sold":3740},"29/03/2026":{"rev":12814579,"sold":1298},"30/03/2026":{"rev":11849692,"sold":1314},"31/03/2026":{"rev":9250347,"sold":1075}}},{"name":"TRÀ SỮA HOA SEN - THÁI BÌNH","rev":486936211,"tc":48603,"avg_ta":10019,"city":"Thái Bình","region":"Miền Bắc","daily":{"01/03/2026":{"rev":17524194,"sold":1670},"02/03/2026":{"rev":13913417,"sold":1376},"03/03/2026":{"rev":13213599,"sold":1363},"04/03/2026":{"rev":20752346,"sold":2084},"05/03/2026":{"rev":11894923,"sold":1241},"06/03/2026":{"rev":13884218,"sold":1370},"07/03/2026":{"rev":21901408,"sold":2029},"08/03/2026":{"rev":26341174,"sold":2524},"09/03/2026":{"rev":15320157,"sold":1608},"10/03/2026":{"rev":15129280,"sold":1507},"11/03/2026":{"rev":19347502,"sold":1976},"12/03/2026":{"rev":14442563,"sold":1366},"13/03/2026":{"rev":16614184,"sold":1629},"14/03/2026":{"rev":15405349,"sold":1478},"15/03/2026":{"rev":15692616,"sold":1640},"16/03/2026":{"rev":13263049,"sold":1445},"17/03/2026":{"rev":13910668,"sold":1374},"18/03/2026":{"rev":17287039,"sold":1715},"19/03/2026":{"rev":13491451,"sold":1309},"20/03/2026":{"rev":15927987,"sold":1557},"21/03/2026":{"rev":14041925,"sold":1407},"22/03/2026":{"rev":14066454,"sold":1381},"23/03/2026":{"rev":12809454,"sold":1334},"24/03/2026":{"rev":9774217,"sold":1035},"25/03/2026":{"rev":20849319,"sold":1909},"26/03/2026":{"rev":12746516,"sold":1189},"27/03/2026":{"rev":14465259,"sold":1370},"28/03/2026":{"rev":19500128,"sold":1816},"29/03/2026":{"rev":15099711,"sold":1369},"30/03/2026":{"rev":15403457,"sold":1478},"31/03/2026":{"rev":12511430,"sold":1232}}},{"name":"Trà Sữa Hoa Sen - Nam Định","rev":93624576,"tc":4537,"avg_ta":20636,"city":"Nam Định","region":"Miền Bắc","daily":{"01/03/2026":{"rev":2546204,"sold":96},"02/03/2026":{"rev":3367157,"sold":150},"03/03/2026":{"rev":2640646,"sold":120},"04/03/2026":{"rev":2383301,"sold":115},"05/03/2026":{"rev":2380839,"sold":135},"06/03/2026":{"rev":2575008,"sold":106},"07/03/2026":{"rev":4792084,"sold":232},"08/03/2026":{"rev":4125531,"sold":194},"09/03/2026":{"rev":2239657,"sold":112},"10/03/2026":{"rev":1402081,"sold":55},"11/03/2026":{"rev":4763703,"sold":248},"12/03/2026":{"rev":3935961,"sold":199},"13/03/2026":{"rev":3303583,"sold":148},"14/03/2026":{"rev":3875302,"sold":190},"15/03/2026":{"rev":3653465,"sold":148},"16/03/2026":{"rev":2816854,"sold":149},"17/03/2026":{"rev":1509452,"sold":67},"18/03/2026":{"rev":3692084,"sold":193},"19/03/2026":{"rev":2952082,"sold":134},"20/03/2026":{"rev":1261112,"sold":66},"21/03/2026":{"rev":3206153,"sold":142},"22/03/2026":{"rev":2252473,"sold":115},"23/03/2026":{"rev":2297897,"sold":94},"24/03/2026":{"rev":2222475,"sold":106},"25/03/2026":{"rev":3229864,"sold":137},"26/03/2026":{"rev":3441990,"sold":156},"27/03/2026":{"rev":3953437,"sold":228},"28/03/2026":{"rev":3285918,"sold":172},"29/03/2026":{"rev":4144778,"sold":187},"30/03/2026":{"rev":2772020,"sold":121},"31/03/2026":{"rev":3622323,"sold":160}}},{"name":"Trà Sữa Hoa Sen - Xuân Trường","rev":812095364,"tc":58180,"avg_ta":13958,"city":"Nam Định","region":"Miền Bắc","daily":{"01/03/2026":{"rev":34706874,"sold":2535},"02/03/2026":{"rev":31438523,"sold":2430},"03/03/2026":{"rev":26574033,"sold":1628},"04/03/2026":{"rev":20240411,"sold":1370},"05/03/2026":{"rev":20677948,"sold":1471},"06/03/2026":{"rev":29342455,"sold":2193},"07/03/2026":{"rev":46361399,"sold":3183},"08/03/2026":{"rev":43445107,"sold":3291},"09/03/2026":{"rev":18918375,"sold":1336},"10/03/2026":{"rev":23124556,"sold":1628},"11/03/2026":{"rev":19879653,"sold":1298},"12/03/2026":{"rev":20324041,"sold":1216},"13/03/2026":{"rev":24229773,"sold":1717},"14/03/2026":{"rev":30815846,"sold":2054},"15/03/2026":{"rev":36869405,"sold":2668},"16/03/2026":{"rev":18762605,"sold":1458},"17/03/2026":{"rev":20494462,"sold":1361},"18/03/2026":{"rev":18538805,"sold":1174},"19/03/2026":{"rev":14551829,"sold":1105},"20/03/2026":{"rev":23430152,"sold":1574},"21/03/2026":{"rev":46064135,"sold":3494},"22/03/2026":{"rev":26237444,"sold":2098},"23/03/2026":{"rev":21180674,"sold":1556},"24/03/2026":{"rev":17258484,"sold":1245},"25/03/2026":{"rev":22085979,"sold":1386},"26/03/2026":{"rev":23168456,"sold":1386},"27/03/2026":{"rev":23500393,"sold":1550},"28/03/2026":{"rev":35396134,"sold":2344},"29/03/2026":{"rev":43199877,"sold":2990},"30/03/2026":{"rev":22975218,"sold":1463},"31/03/2026":{"rev":21078680,"sold":1404}}},{"name":"Trà Sữa Hoa Sen - Quảng Bình","rev":19658996,"tc":1233,"avg_ta":15944,"city":"Quảng Bình","region":"Miền Trung","daily":{"01/03/2026":{"rev":1734430,"sold":76},"02/03/2026":{"rev":357688,"sold":15},"03/03/2026":{"rev":211908,"sold":9},"04/03/2026":{"rev":86422,"sold":15},"05/03/2026":{"rev":618607,"sold":39},"06/03/2026":{"rev":318117,"sold":27},"07/03/2026":{"rev":431603,"sold":45},"08/03/2026":{"rev":1701633,"sold":100},"09/03/2026":{"rev":1883545,"sold":86},"10/03/2026":{"rev":616069,"sold":42},"11/03/2026":{"rev":137603,"sold":9},"12/03/2026":{"rev":968531,"sold":70},"13/03/2026":{"rev":308255,"sold":34},"14/03/2026":{"rev":1190864,"sold":89},"15/03/2026":{"rev":1418226,"sold":81},"16/03/2026":{"rev":657639,"sold":30},"17/03/2026":{"rev":0,"sold":0},"18/03/2026":{"rev":190220,"sold":12},"19/03/2026":{"rev":119154,"sold":9},"20/03/2026":{"rev":575073,"sold":48},"21/03/2026":{"rev":1115198,"sold":68},"22/03/2026":{"rev":228991,"sold":9},"23/03/2026":{"rev":87104,"sold":12},"24/03/2026":{"rev":307704,"sold":21},"25/03/2026":{"rev":0,"sold":0},"26/03/2026":{"rev":558411,"sold":39},"27/03/2026":{"rev":786104,"sold":36},"28/03/2026":{"rev":907143,"sold":63},"29/03/2026":{"rev":351885,"sold":24},"30/03/2026":{"rev":427040,"sold":24},"31/03/2026":{"rev":1378452,"sold":97}}},{"name":"Trà Sữa Hoa Sen _ Tuyên Quang","rev":1036269434,"tc":82712,"avg_ta":12529,"city":"Tuyên Quang","region":"Miền Bắc","daily":{"01/03/2026":{"rev":16355586,"sold":1288},"02/03/2026":{"rev":10505574,"sold":764},"03/03/2026":{"rev":38455906,"sold":2792},"04/03/2026":{"rev":57213569,"sold":4343},"05/03/2026":{"rev":61466288,"sold":4751},"06/03/2026":{"rev":56751088,"sold":4377},"07/03/2026":{"rev":61651227,"sold":4942},"08/03/2026":{"rev":64018147,"sold":4754},"09/03/2026":{"rev":42634825,"sold":3315},"10/03/2026":{"rev":28451835,"sold":2130},"11/03/2026":{"rev":33422149,"sold":2662},"12/03/2026":{"rev":38450493,"sold":3074},"13/03/2026":{"rev":35913250,"sold":2866},"14/03/2026":{"rev":38925409,"sold":3089},"15/03/2026":{"rev":31917424,"sold":2596},"16/03/2026":{"rev":26331468,"sold":2025},"17/03/2026":{"rev":20916394,"sold":1630},"18/03/2026":{"rev":19670394,"sold":1522},"19/03/2026":{"rev":17127131,"sold":1315},"20/03/2026":{"rev":23428370,"sold":1846},"21/03/2026":{"rev":28835407,"sold":2304},"22/03/2026":{"rev":22183784,"sold":1788},"23/03/2026":{"rev":16811818,"sold":1264},"24/03/2026":{"rev":17792808,"sold":1435},"25/03/2026":{"rev":21649711,"sold":1696},"26/03/2026":{"rev":49822682,"sold":6091},"27/03/2026":{"rev":48512236,"sold":5459},"28/03/2026":{"rev":32951068,"sold":2632},"29/03/2026":{"rev":29526085,"sold":2241},"30/03/2026":{"rev":23621176,"sold":1768},"31/03/2026":{"rev":17851369,"sold":1364}}}],"daily":[{"date":"01/03/2026","day":1,"rev":675629915,"sold":62390},{"date":"02/03/2026","day":2,"rev":601511148,"sold":59544},{"date":"03/03/2026","day":3,"rev":512755925,"sold":50055},{"date":"04/03/2026","day":4,"rev":719056476,"sold":69974},{"date":"05/03/2026","day":5,"rev":625668460,"sold":60338},{"date":"06/03/2026","day":6,"rev":1089871645,"sold":113937},{"date":"07/03/2026","day":7,"rev":855623461,"sold":81114},{"date":"08/03/2026","day":8,"rev":956006814,"sold":88463},{"date":"09/03/2026","day":9,"rev":629439831,"sold":61513},{"date":"10/03/2026","day":10,"rev":569380561,"sold":54766},{"date":"11/03/2026","day":11,"rev":705133695,"sold":69282},{"date":"12/03/2026","day":12,"rev":594876244,"sold":56856},{"date":"13/03/2026","day":13,"rev":638713440,"sold":61746},{"date":"14/03/2026","day":14,"rev":707852761,"sold":66249},{"date":"15/03/2026","day":15,"rev":667958105,"sold":63433},{"date":"16/03/2026","day":16,"rev":567665539,"sold":56062},{"date":"17/03/2026","day":17,"rev":523862822,"sold":50705},{"date":"18/03/2026","day":18,"rev":676715098,"sold":66478},{"date":"19/03/2026","day":19,"rev":554737241,"sold":56820},{"date":"20/03/2026","day":20,"rev":592066976,"sold":59863},{"date":"21/03/2026","day":21,"rev":699642040,"sold":66976},{"date":"22/03/2026","day":22,"rev":645231660,"sold":61892},{"date":"23/03/2026","day":23,"rev":502146509,"sold":50751},{"date":"24/03/2026","day":24,"rev":509082198,"sold":47998},{"date":"25/03/2026","day":25,"rev":697425105,"sold":67071},{"date":"26/03/2026","day":26,"rev":607665083,"sold":59241},{"date":"27/03/2026","day":27,"rev":628712223,"sold":63326},{"date":"28/03/2026","day":28,"rev":656637641,"sold":61768},{"date":"29/03/2026","day":29,"rev":646248154,"sold":59913},{"date":"30/03/2026","day":30,"rev":573643110,"sold":55527},{"date":"31/03/2026","day":31,"rev":522269406,"sold":50095}]};
+
+// ---- HELPERS ----
+function fmtVND(v) {
+  if (v >= 1e9) return (v/1e9).toFixed(2).replace(/\.?0+$/,'') + ' tỷ';
+  if (v >= 1e6) return (v/1e6).toFixed(1) + ' tr';
+  return v.toLocaleString('vi-VN') + ' đ';
+}
+function fmtM(v) { return (v/1e6).toFixed(1); }
+function fmtNum(v) { return v.toLocaleString('vi-VN'); }
+function fmtTA(v) { return v.toLocaleString('vi-VN') + ' đ'; }
+
+const WEEKENDS = [1,7,8,14,15,21,22,28,29];
+const TOTAL_REV = DATA.kpis.total_rev_net;
+
+// ---- KPI CARDS ----
+function renderKPIs() {
+  const kpis = DATA.kpis;
+  const cards = [
+    { label: 'Doanh Thu Net', value: fmtVND(kpis.total_rev_net), unit: 'Tổng tháng 3/2026', cls: 'c1', icon: '💰' },
+    { label: 'Tổng Giao Dịch (TC)', value: fmtNum(kpis.total_tc), unit: 'Số lượt mua hàng', cls: 'c2', icon: '🧾' },
+    { label: 'ADTC', value: fmtNum(kpis.adtc), unit: 'TB giao dịch / ngày', cls: 'c3', icon: '📆' },
+    { label: 'Avg Transaction (TA)', value: fmtTA(kpis.avg_ta), unit: 'Giá trị TB / giao dịch', cls: 'c4', icon: '🛍' },
+    { label: 'Số Cửa Hàng', value: kpis.num_stores, unit: 'Đang hoạt động', cls: 'c5', icon: '🏪' },
+  ];
+  document.getElementById('kpiGrid').innerHTML = cards.map(c => `
+    <div class="kpi-card ${c.cls}">
+      <div class="kpi-icon">${c.icon}</div>
+      <div class="kpi-label">${c.label}</div>
+      <div class="kpi-value">${c.value}</div>
+      <div class="kpi-unit">${c.unit}</div>
+    </div>
+  `).join('');
+}
+
+// ---- BAR CHART: TOP 10 ----
+function renderBarChart() {
+  const sorted = [...DATA.stores].sort((a,b) => b.rev - a.rev).slice(0,10);
+  const labels = sorted.map(s => {
+    let n = s.name.replace(/BLP /i,'').replace(/Trà Sữa Hoa Sen[-_]?\s*/i,'').trim();
+    return n.length > 22 ? n.slice(0,20)+'…' : n;
+  });
+  const vals = sorted.map(s => +(s.rev/1e6).toFixed(1));
+  const colors = sorted.map((_,i) => i===0?'rgba(232,93,154,0.9)':i===1?'rgba(244,168,58,0.85)':i===2?'rgba(56,189,248,0.8)':'rgba(100,116,139,0.6)');
+  
+  new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: { labels, datasets: [{ data: vals, backgroundColor: colors, borderRadius: 6, borderSkipped: false }] },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => ' ' + ctx.raw.toFixed(1) + ' tr đ' }
+      }},
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font:{size:11} } },
+        y: { grid: { display: false }, ticks: { color: '#e6edf3', font:{size:11} } }
+      }
+    }
+  });
+}
+
+// ---- LINE CHART: DAILY TREND ----
+let lineChartInst = null;
+let currentMode = 'all';
+
+function buildLineData(mode) {
+  let days = DATA.daily;
+  if (mode === 'weekday') days = days.filter(d => !WEEKENDS.includes(d.day));
+  if (mode === 'weekend') days = days.filter(d => WEEKENDS.includes(d.day));
+  return {
+    labels: days.map(d => d.day + '/3'),
+    revs: days.map(d => +(d.rev/1e6).toFixed(1)),
+    isWeekend: days.map(d => WEEKENDS.includes(d.day))
+  };
+}
+
+function renderLineChart(mode) {
+  const {labels, revs, isWeekend} = buildLineData(mode);
+  const pointColors = isWeekend.map(w => w ? 'rgba(244,168,58,1)' : 'rgba(232,93,154,0.8)');
+  const pointRadius = isWeekend.map(w => w ? 6 : 4);
+  
+  const ctx = document.getElementById('lineChart');
+  if (lineChartInst) lineChartInst.destroy();
+  lineChartInst = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data: revs,
+        borderColor: 'rgba(232,93,154,0.8)',
+        backgroundColor: 'rgba(232,93,154,0.08)',
+        fill: true,
+        tension: 0.35,
+        pointBackgroundColor: pointColors,
+        pointRadius: pointRadius,
+        pointHoverRadius: 7,
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ' ' + ctx.raw + ' tr đ',
+            afterLabel: (ctx) => {
+              const day = DATA.daily.find(d => (d.day+'/3') === ctx.label);
+              return day ? '  ' + fmtNum(day.sold) + ' TC' : '';
+            }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8b949e', font:{size:10} } },
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font:{size:11} }, 
+             title: { display: true, text: 'triệu đ', color: '#8b949e', font:{size:10} } }
+      }
+    }
+  });
+}
+
+function setDailyMode(mode, btn) {
+  currentMode = mode;
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLineChart(mode);
+}
+
+// ---- REGIONAL BREAKDOWN ----
+function renderCityBreakdown() {
+  const cityMap = {};
+  DATA.stores.forEach(s => {
+    if (!cityMap[s.city]) cityMap[s.city] = {rev:0, tc:0, stores:0};
+    cityMap[s.city].rev += s.rev;
+    cityMap[s.city].tc += s.tc;
+    cityMap[s.city].stores++;
+  });
+  const sorted = Object.entries(cityMap).sort((a,b) => b[1].rev - a[1].rev);
+  const maxRev = sorted[0][1].rev;
+  const palette = ['#e85d9a','#38bdf8','#4ade80','#f4a83a','#f87171','#a78bfa','#2dd4bf','#fb923c','#facc15','#94a3b8','#f472b6'];
+  
+  document.getElementById('cityBreakdown').innerHTML = sorted.map(([city, v], i) => `
+    <div class="breakdown-row">
+      <div class="breakdown-name">${city}</div>
+      <div class="breakdown-bar-wrap">
+        <div class="breakdown-bar" style="width:${(v.rev/maxRev*100).toFixed(1)}%;background:${palette[i%palette.length]};opacity:0.85"></div>
+      </div>
+      <div class="breakdown-val">
+        <strong>${fmtVND(v.rev)}</strong><br>
+        <span style="font-size:10px">${fmtNum(v.tc)} TC · ${v.stores} CH</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderRegionBreakdown() {
+  const regionMap = {};
+  DATA.stores.forEach(s => {
+    if (!regionMap[s.region]) regionMap[s.region] = {rev:0, tc:0, stores:0};
+    regionMap[s.region].rev += s.rev;
+    regionMap[s.region].tc += s.tc;
+    regionMap[s.region].stores++;
+  });
+  const sorted = Object.entries(regionMap).sort((a,b) => b[1].rev - a[1].rev);
+  const maxRev = sorted[0][1].rev;
+  const regionColors = {'Miền Bắc': '#4ade80', 'Miền Trung': '#f87171'};
+  
+  document.getElementById('regionBreakdown').innerHTML = sorted.map(([region, v]) => `
+    <div class="breakdown-row">
+      <div class="breakdown-name">${region}</div>
+      <div class="breakdown-bar-wrap">
+        <div class="breakdown-bar" style="width:${(v.rev/maxRev*100).toFixed(1)}%;background:${regionColors[region]||'#94a3b8'}"></div>
+      </div>
+      <div class="breakdown-val">
+        <strong>${fmtVND(v.rev)}</strong><br>
+        <span style="font-size:10px">${fmtNum(v.tc)} TC · ${v.stores} CH</span>
+      </div>
+    </div>
+  `).join('');
+
+  // Pie chart
+  new Chart(document.getElementById('regionPie'), {
+    type: 'doughnut',
+    data: {
+      labels: sorted.map(([r]) => r),
+      datasets: [{ 
+        data: sorted.map(([,v]) => v.rev),
+        backgroundColor: sorted.map(([r]) => regionColors[r]||'#94a3b8'),
+        borderWidth: 0, hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '68%',
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#8b949e', font:{size:12}, padding:16 }},
+        tooltip: { callbacks: { label: ctx => ' ' + fmtVND(ctx.raw) + ' (' + (ctx.raw/TOTAL_REV*100).toFixed(1) + '%)' }}
+      }
+    }
+  });
+}
+
+// ---- TABLE ----
+let tableData = [...DATA.stores].sort((a,b) => b.rev - a.rev);
+let sortCol = 4;
+let sortDir = -1; // -1=desc
+
+function populateCityFilter() {
+  const cities = [...new Set(DATA.stores.map(s => s.city))].sort();
+  const sel = document.getElementById('cityFilter');
+  cities.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c; opt.textContent = c;
+    sel.appendChild(opt);
+  });
+}
+
+function getFilteredData() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const city = document.getElementById('cityFilter').value;
+  const region = document.getElementById('regionFilter').value;
+  return DATA.stores.filter(s => {
+    if (search && !s.name.toLowerCase().includes(search)) return false;
+    if (city && s.city !== city) return false;
+    if (region && s.region !== region) return false;
+    return true;
+  });
+}
+
+function sortTable(col) {
+  if (sortCol === col) sortDir *= -1;
+  else { sortCol = col; sortDir = col >= 4 ? -1 : 1; }
+  document.querySelectorAll('thead th .sort-arrow').forEach(el => el.textContent = '');
+  const th = document.querySelector(`thead th[data-col="${col}"] .sort-arrow`);
+  if (th) th.textContent = sortDir === -1 ? '↓' : '↑';
+  document.querySelectorAll('thead th').forEach(t => t.classList.remove('sorted'));
+  document.querySelector(`thead th[data-col="${col}"]`)?.classList.add('sorted');
+  renderTable();
+}
+
+function renderTable() {
+  const filtered = getFilteredData();
+  const sortKey = [null, 'name', 'city', 'region', 'rev', 'tc', 'avg_ta'][sortCol] || 'rev';
+  
+  filtered.sort((a,b) => {
+    const av = typeof a[sortKey] === 'string' ? a[sortKey] : a[sortKey];
+    const bv = typeof b[sortKey] === 'string' ? b[sortKey] : b[sortKey];
+    if (typeof av === 'string') return sortDir * av.localeCompare(bv, 'vi');
+    return sortDir * (bv - av);
+  });
+  
+  // Global rank for all stores sorted by rev
+  const allSorted = [...DATA.stores].sort((a,b) => b.rev - a.rev);
+  const rankMap = {};
+  allSorted.forEach((s,i) => rankMap[s.name] = i+1);
+  
+  document.getElementById('rowCount').textContent = `Hiển thị ${filtered.length} / ${DATA.stores.length} cửa hàng`;
+  
+  document.getElementById('tableBody').innerHTML = filtered.map((s) => {
+    const rank = rankMap[s.name];
+    const rankClass = rank===1?'r1':rank===2?'r2':rank===3?'r3':'rn';
+    const pct = (s.rev / TOTAL_REV * 100).toFixed(1);
+    const barW = Math.round(s.rev / allSorted[0].rev * 120);
+    const regionCls = s.region === 'Miền Bắc' ? 'mb' : 'mt';
+    return `
+      <tr>
+        <td><span class="rank-badge ${rankClass}">${rank}</span></td>
+        <td class="store-name">${s.name}</td>
+        <td><span class="city-tag">${s.city}</span></td>
+        <td><span class="region-tag ${regionCls}">${s.region}</span></td>
+        <td class="rev-cell">${(s.rev/1e6).toFixed(1)} tr</td>
+        <td class="tc-cell">${fmtNum(s.tc)}</td>
+        <td class="ta-cell">${fmtNum(s.avg_ta)}</td>
+        <td>
+          <span class="bar-mini" style="width:${barW}px"></span>
+          <span class="perf-pct"> ${pct}%</span>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// ---- INIT ----
+renderKPIs();
+renderBarChart();
+renderLineChart('all');
+renderCityBreakdown();
+renderRegionBreakdown();
+populateCityFilter();
+renderTable();
+
+document.getElementById('searchInput').addEventListener('input', renderTable);
+document.getElementById('cityFilter').addEventListener('change', renderTable);
+document.getElementById('regionFilter').addEventListener('change', renderTable);
+</script>
+</body>
+</html>
